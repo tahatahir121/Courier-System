@@ -86,43 +86,42 @@
             font-size: 2rem;
         }
 
-        .nav-link,
-        .nav-link.dropdown-toggle {
-            font-weight: 600;
-            color: var(--dark) !important;
-            margin: 0 0.5rem;
-            position: relative;
-            padding: 0.5rem 0 !important;
-        }
+.nav-link,
+.nav-link.dropdown-toggle {
+    font-weight: 600;
+    color: var(--dark) !important;
+    margin: 0 0.5rem;
+    position: relative;
+    padding: 0.5rem 0 !important;
+}
 
-        /* Underline */
-        .nav-link::before,
-        .nav-link.dropdown-toggle::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -2px;
-            width: 0;
-            height: 3px;
-            background: var(--gradient);
-            border-radius: 10px;
-            transition: width .3s ease;
-        }
+/* Underline */
+.nav-link::before,
+.nav-link.dropdown-toggle::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 3px;
+    background: var(--gradient);
+    border-radius: 10px;
+    transition: width .3s ease;
+}
 
-        .nav-link:hover::before,
-        .nav-link.active::before,
-        .nav-link.dropdown-toggle:hover::before,
-        .nav-item.show .dropdown-toggle::before {
-            width: 100%;
-        }
+.nav-link:hover::before,
+.nav-link.active::before,
+.nav-link.dropdown-toggle:hover::before,
+.nav-item.show .dropdown-toggle::before {
+    width: 100%;
+}
 
-        /* Dropdown arrow color */
-        .dropdown-toggle::after {
-            border-top-color: var(--dark);
-            margin-left: .4rem;
-            vertical-align: middle;
-        }
-
+/* Dropdown arrow color */
+.dropdown-toggle::after {
+    border-top-color: var(--dark);
+    margin-left: .4rem;
+    vertical-align: middle;
+}
         .auth-buttons {
             display: flex;
             gap: 15px;
@@ -711,7 +710,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index3.html">
+            <a class="navbar-brand" href="Admin.html">
                 <i class="fas fa-bolt"></i> QuantumExpress
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -731,11 +730,17 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="track-consignment.html">Track Order</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../Admin/index.html">Exist</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle " href="#" id="dashboardDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Dashboard
+                        </a>
+
+                        <ul class="dropdown-menu" aria-labelledby="dashboardDropdown">
+                            <li><a class="dropdown-item" href="../Admin/Dashbaord.html">Admin Dashboard</a></li>
+                            <li><a class="dropdown-item" href="index.html">Exist</a></li>
+
+                        </ul>
                     </li>
                 </ul>
                 <div class="auth-buttons">
