@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.2rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 900;
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        /* Auth Container */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            min-height: calc(100vh - 76px);
+        }
+
+        .auth-wrapper {
+            background: white;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 1200px;
+            height: auto;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1);
+            display: flex;
+        }
+
+        /* Left: Registration Form */
+        .form-panel {
+            width: 60%;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-content {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .form-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .form-subtitle {
+            color: #64748b;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Right: Benefits Information */
+        .info-panel {
+            width: 40%;
+            background: var(--gradient);
+            color: white;
+            padding: 4rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .info-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-panel h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-panel p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 2rem;
+        }
+
+        .benefits-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .benefits-list li i {
+            background: rgba(255, 255, 255, 0.2);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--dark);
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            color: var(--dark);
+        }
+
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            outline: none;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .input-with-icon .form-control {
+            padding-left: 3rem;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.75rem;
+        }
+
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 0.75rem;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-input {
+            margin-right: 0.75rem;
+            margin-top: 0.25rem;
+            width: 1.2em;
+            height: 1.2em;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .terms-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .btn-submit {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .auth-switch p {
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .switch-link {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .switch-link:hover {
+            color: var(--primary-dark);
+            background: rgba(99, 102, 241, 0.1);
+            gap: 0.8rem;
+        }
+
+        .switch-link i {
+            transition: transform 0.3s ease;
+        }
+
+        .switch-link:hover i {
+            transform: translateX(5px);
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            background: #ef4444;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .strength-meter.weak {
+            width: 33%;
+            background: #ef4444;
+        }
+
+        .strength-meter.medium {
+            width: 66%;
+            background: #f59e0b;
+        }
+
+        .strength-meter.strong {
+            width: 100%;
+            background: #10b981;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .copyright {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .auth-wrapper {
+                flex-direction: column;
+                max-width: 500px;
+            }
+
+            .form-panel {
+                width: 100%;
+                padding: 3rem 2rem;
+                order: 2;
+            }
+
+            .info-panel {
+                width: 100%;
+                padding: 3rem 2rem;
+                order: 1;
+            }
+
+            .info-panel h2 {
+                font-size: 2rem;
+            }
+
+            .form-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .auth-container {
+                padding: 1rem;
+            }
+
+            .auth-wrapper {
+                border-radius: 20px;
+            }
+
+            .form-panel,
+            .info-panel {
+                padding: 2rem 1.5rem;
+            }
+
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0;
+                margin-bottom: 1rem;
+            }
+
+            .col-md-6:last-child {
+                margin-bottom: 0;
+            }
+
+            .row {
+                margin: 0;
+            }
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+        }
+
+        .input-with-icon select {
+            padding-left: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="index3.html">
+                <i class="fas fa-bolt"></i> QuantumExpress
+            </a>
+        </div>
+    </nav>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <!-- Left: Registration Form -->
+            <div class="form-panel">
+                <div class="form-content">
+                    <h2 class="form-title">Create Account</h2>
+                    <p class="form-subtitle">Start your 30-day free trial. No credit card required.</p>
+
+                    <form id="registerForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="firstName" class="form-label">First Name</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" class="form-control" id="firstName" placeholder="John"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="lastName" class="form-label">Last Name</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" class="form-control" id="lastName" placeholder="Doe"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerEmail" class="form-label">Email Address</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" class="form-control" id="registerEmail"
+                                    placeholder="you@company.com" required>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="registerPassword" class="form-label">Password</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" class="form-control" id="registerPassword"
+                                            placeholder="Create password" required>
+                                    </div>
+                                    <div class="password-strength">
+                                        <div class="strength-meter" id="passwordStrength"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" class="form-control" id="confirmPassword"
+                                            placeholder="Confirm password" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="acceptTerms" required>
+                            <label class="form-check-label" for="acceptTerms">
+                                I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#"
+                                    class="terms-link">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input type="checkbox" class="form-check-input" id="newsletter">
+                            <label class="form-check-label" for="newsletter">
+                                Send me product updates and tips via email
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-rocket me-2"></i> Start Free Trial
+                        </button>
+
+                        <div class="auth-switch">
+                            <p>Already have an account?</p>
+                            <a href="login.html" class="switch-link">
+                                Sign In <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Benefits Information -->
+            <div class="info-panel">
+                <div class="info-content">
+                    <h2>Start Your Quantum Journey</h2>
+                    <p>Join thousands of businesses revolutionizing their logistics with QuantumExpress.</p>
+
+                    <ul class="benefits-list">
+                        <li><i class="fas fa-bolt"></i> 30-day free trial</li>
+                        <li><i class="fas fa-chart-line"></i> Advanced analytics dashboard</li>
+                        <li><i class="fas fa-shipping-fast"></i> Real-time package tracking</li>
+                        <li><i class="fas fa-robot"></i> AI-powered route optimization</li>
+                        <li><i class="fas fa-users"></i> Team collaboration tools</li>
+                        <li><i class="fas fa-headset"></i> 24/7 priority support</li>
+                    </ul>
+
+                    <div class="mt-4">
+                        <p class="mb-2">Already have an account?</p>
+                        <a href="login.html" class="switch-link">
+                            Sign In <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <a href="index.html" class="footer-logo"><i class="fas fa-bolt me-2"></i>QuantumExpress</a>
+            <p class="copyright">© 2023 QuantumExpress. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Registration page functionality
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Password strength indicator
+            const passwordInput = document.getElementById('registerPassword');
+            const passwordStrength = document.getElementById('passwordStrength');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+
+            passwordInput.addEventListener('input', function () {
+                const password = this.value;
+                let strength = 0;
+
+                // Check password criteria
+                if (password.length >= 8) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                // Update strength meter with animation
+                passwordStrength.className = 'strength-meter';
+
+                if (strength <= 2) {
+                    passwordStrength.classList.add('weak');
+                } else if (strength <= 4) {
+                    passwordStrength.classList.add('medium');
+                } else {
+                    passwordStrength.classList.add('strong');
+                }
+            });
+
+            // Password confirmation check
+            confirmPasswordInput.addEventListener('input', function () {
+                const password = passwordInput.value;
+                const confirm = this.value;
+
+                if (confirm && password !== confirm) {
+                    this.style.borderColor = '#ef4444';
+                    this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.2)';
+                } else {
+                    this.style.borderColor = '#e2e8f0';
+                    this.style.boxShadow = 'none';
+                }
+            });
+
+            // Form submission
+            const registerForm = document.getElementById('registerForm');
+
+            registerForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Check if passwords match
+                const password = passwordInput.value;
+                const confirm = confirmPasswordInput.value;
+
+                if (password !== confirm) {
+                    alert('Passwords do not match!');
+                    confirmPasswordInput.focus();
+                    return;
+                }
+
+                // Check if terms are accepted
+                const acceptTerms = document.getElementById('acceptTerms').checked;
+                if (!acceptTerms) {
+                    alert('Please accept the Terms of Service and Privacy Policy.');
+                    return;
+                }
+
+                const submitBtn = this.querySelector('.btn-submit');
+                const originalText = submitBtn.innerHTML;
+
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating Account...';
+                submitBtn.disabled = true;
+
+                // Simulate API call (2 seconds)
+                setTimeout(() => {
+                    // Show success
+                    submitBtn.innerHTML = '<i class="fas fa-check me-2"></i> Account Created!';
+
+                    // Show success message
+                    showNotification('Account created successfully! Welcome to QuantumExpress.', 'success');
+
+                    // Reset form after delay
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        registerForm.reset();
+                        passwordStrength.className = 'strength-meter';
+
+                        // Redirect to dashboard or login
+                        // window.location.href = 'dashboard.html';
+                    }, 2000);
+                }, 2000);
+            });
+
+            // Input focus animations
+            const formInputs = document.querySelectorAll('.form-control');
+
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.parentElement.style.transform = 'translateY(-2px)';
+                });
+
+                input.addEventListener('blur', function () {
+                    this.parentElement.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Button hover effect
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-3px)';
+            });
+
+            submitBtn.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0)';
+            });
+
+            // Page entrance animation
+            const authWrapper = document.querySelector('.auth-wrapper');
+            authWrapper.style.opacity = '0';
+            authWrapper.style.transform = 'translateY(20px)';
+            authWrapper.style.transition = 'all 0.6s ease';
+
+            setTimeout(() => {
+                authWrapper.style.opacity = '1';
+                authWrapper.style.transform = 'translateY(0)';
+            }, 100);
+
+            // Notification function
+            function showNotification(message, type = 'info') {
+                // Remove existing notification
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : '#d1fae5'};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : '#a7f3d0'};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : '#065f46'};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'check-circle'} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 5000);
+            }
+
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+
+            // Animate gradient in info panel
+            const infoPanel = document.querySelector('.info-panel');
+            let hue = 200;
+
+            function animateGradient() {
+                hue = (hue + 0.2) % 360;
+                infoPanel.style.background = `linear-gradient(135deg, hsl(${hue}, 100%, 65%) 0%, hsl(${(hue + 30) % 360}, 100%, 65%) 50%, hsl(${(hue + 60) % 360}, 100%, 65%) 100%)`;
+                requestAnimationFrame(animateGradient);
+            }
+
+            // Start gradient animation
+            animateGradient();
+        });
+    </script>
+</body>
+
+</html>
+<div class="plyr__poster"
+    style="background-image: url(&quot;https://static.vecteezy.com/system/resources/thumbnails/071/252/900/large/animated-of-motorbike-courier-delivering-packages-delivery-goods-and-food-concept-full-length-animated-illustrations-high-quality-4k-footage-video.jpg&quot;);">
+</div>

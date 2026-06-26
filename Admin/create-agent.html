@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Agent | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+        
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            color: #64748b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Form Container */
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .input-with-icon .form-control {
+            padding-left: 3rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        /* Agent Type Selector */
+        .agent-type-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .agent-type-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .agent-type-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .agent-type-card.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.1);
+        }
+        
+        .agent-type-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .agent-type-card h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .agent-type-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        
+        /* Agent Preview */
+        .agent-preview {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: none;
+        }
+        
+        .preview-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .preview-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 1.5rem;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+        
+        .preview-info h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-info p {
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .preview-type {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #e0e7ff;
+            color: var(--primary-dark);
+        }
+        
+        /* Permissions Section */
+        .permissions-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .permission-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .permission-item:hover {
+            border-color: var(--primary);
+        }
+        
+        .permission-item.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .permission-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            border: 2px solid #cbd5e1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .permission-item.selected .permission-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .permission-item.selected .permission-checkbox i {
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        .permission-label {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .form-container, .permissions-section, .agent-preview {
+                padding: 1.5rem;
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .search-box input:focus {
+                width: 220px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .agent-type-selector {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .permissions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="index2.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+                <span class="menu-badge">24</span>
+            </a>
+            <a href="manage-agent.html" class="menu-item active">
+                <i class="fas fa-user-tie"></i>
+                <span>Agents</span>
+                <span class="menu-badge">8</span>
+            </a>
+
+            <a href="manage-customer.html" class="menu-item ">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+                <span class="menu-badge">125</span>
+            </a>
+            <a href="delivery-sms.html" class="menu-item">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="shipment-report.html" class="menu-item ">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>Administrator</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>Create New Agent</h1>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Add New Agent</h2>
+                    <p>Create a new agent account with specific permissions</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="window.location.href='manage-agent.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Agents
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Agent Type Selector -->
+            <div class="form-container">
+                <h3 class="form-title">Select Agent Type</h3>
+                <div class="agent-type-selector">
+                    <div class="agent-type-card" data-type="support">
+                        <div class="agent-type-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4>Support Agent</h4>
+                        <p>Customer support and query resolution</p>
+                    </div>
+                    
+                    <div class="agent-type-card" data-type="dispatch">
+                        <div class="agent-type-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h4>Dispatch Agent</h4>
+                        <p>Package dispatch and route management</p>
+                    </div>
+                    
+                    <div class="agent-type-card" data-type="supervisor">
+                        <div class="agent-type-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h4>Supervisor</h4>
+                        <p>Team management and oversight</p>
+                    </div>
+                    
+                    <div class="agent-type-card" data-type="admin">
+                        <div class="agent-type-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h4>Admin Agent</h4>
+                        <p>Full system access with limited admin rights</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent Preview -->
+            <div class="agent-preview" id="agentPreview">
+                <div class="preview-header">
+                    <div class="preview-avatar" id="previewAvatar">AG</div>
+                    <div class="preview-info">
+                        <h4 id="previewName">New Agent</h4>
+                        <p id="previewEmail">agent@quantumexpress.com</p>
+                        <span class="preview-type" id="previewType">Support Agent</span>
+                    </div>
+                </div>
+                <p id="previewDescription">This agent will be able to handle customer queries and provide support.</p>
+            </div>
+            
+            <!-- Agent Form -->
+            <div class="form-container">
+                <h3 class="form-title">Agent Information</h3>
+                <form id="createAgentForm">
+                    <div class="form-grid">
+                        <!-- Personal Information -->
+                        <div class="form-group">
+                            <label class="form-label">Full Name *</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" class="form-control" id="fullName" placeholder="Enter agent's full name" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email Address *</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" class="form-control" id="email" placeholder="agent@quantumexpress.com" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" class="form-control" id="phone" placeholder="+1 (555) 123-4567" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control" id="dob">
+                        </div>
+                        
+                        <!-- Account Information -->
+                        <div class="form-group">
+                            <label class="form-label">Username *</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user-circle"></i>
+                                <input type="text" class="form-control" id="username" placeholder="Choose a username" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Password *</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" class="form-control" id="password" placeholder="Create strong password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password *</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Agent ID *</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-id-card"></i>
+                                <input type="text" class="form-control" id="agentId" placeholder="QE-A001" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Address Information -->
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" class="form-control" id="address" placeholder="Street address">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" placeholder="City">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <select class="form-control" id="country">
+                                <option value="">Select country</option>
+                                <option value="us">United States</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                                <option value="au">Australia</option>
+                                <option value="in">India</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Employment Information -->
+                        <div class="form-group">
+                            <label class="form-label">Join Date *</label>
+                            <input type="date" class="form-control" id="joinDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Department</label>
+                            <select class="form-control" id="department">
+                                <option value="">Select department</option>
+                                <option value="support">Customer Support</option>
+                                <option value="dispatch">Dispatch</option>
+                                <option value="operations">Operations</option>
+                                <option value="sales">Sales</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Reports To</label>
+                            <select class="form-control" id="reportsTo">
+                                <option value="">Select supervisor</option>
+                                <option value="john">John Doe</option>
+                                <option value="sarah">Sarah Wilson</option>
+                                <option value="michael">Michael Brown</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Status -->
+                        <div class="form-group">
+                            <label class="form-label">Status *</label>
+                            <select class="form-control" id="status" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="pending">Pending Approval</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Permissions Section -->
+            <div class="permissions-section">
+                <h3 class="form-title">Agent Permissions</h3>
+                <p class="text-muted mb-4">Select the permissions this agent will have access to</p>
+                
+                <div class="permissions-grid" id="permissionsGrid">
+                    <!-- Permissions will be dynamically loaded based on agent type -->
+                </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="form-container">
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='manage-agent.html'">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-primary" form="createAgentForm">
+                        <i class="fas fa-user-plus"></i> Create Agent
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Agent type descriptions
+        const agentTypes = {
+            support: {
+                name: "Support Agent",
+                description: "This agent will be able to handle customer queries, track packages, and provide customer support.",
+                icon: "fa-headset",
+                color: "#6366f1"
+            },
+            dispatch: {
+                name: "Dispatch Agent",
+                description: "This agent will manage package dispatch, assign couriers, and optimize delivery routes.",
+                icon: "fa-tasks",
+                color: "#10b981"
+            },
+            supervisor: {
+                name: "Supervisor",
+                description: "This agent will oversee teams, monitor performance, and handle escalations.",
+                icon: "fa-user-shield",
+                color: "#8b5cf6"
+            },
+            admin: {
+                name: "Admin Agent",
+                description: "This agent will have extensive system access with administrative privileges.",
+                icon: "fa-cogs",
+                color: "#f59e0b"
+            }
+        };
+
+        // Permissions by agent type
+        const permissionsByType = {
+            support: [
+                { id: 'view_packages', name: 'View Packages', description: 'View package details and tracking information' },
+                { id: 'update_status', name: 'Update Status', description: 'Update package delivery status' },
+                { id: 'customer_support', name: 'Customer Support', description: 'Access customer support tools' },
+                { id: 'view_reports', name: 'View Reports', description: 'View customer support reports' },
+                { id: 'create_tickets', name: 'Create Tickets', description: 'Create support tickets' }
+            ],
+            dispatch: [
+                { id: 'assign_couriers', name: 'Assign Couriers', description: 'Assign packages to couriers' },
+                { id: 'manage_routes', name: 'Manage Routes', description: 'Create and optimize delivery routes' },
+                { id: 'track_deliveries', name: 'Track Deliveries', description: 'Track real-time delivery progress' },
+                { id: 'update_schedule', name: 'Update Schedule', description: 'Update delivery schedules' },
+                { id: 'view_analytics', name: 'View Analytics', description: 'View dispatch analytics' }
+            ],
+            supervisor: [
+                { id: 'manage_agents', name: 'Manage Agents', description: 'Add and manage team agents' },
+                { id: 'view_all_packages', name: 'View All Packages', description: 'View all packages in the system' },
+                { id: 'performance_reports', name: 'Performance Reports', description: 'Generate team performance reports' },
+                { id: 'approve_requests', name: 'Approve Requests', description: 'Approve agent requests' },
+                { id: 'escalation_handling', name: 'Escalation Handling', description: 'Handle escalated issues' }
+            ],
+            admin: [
+                { id: 'system_settings', name: 'System Settings', description: 'Configure system settings' },
+                { id: 'user_management', name: 'User Management', description: 'Manage all users and agents' },
+                { id: 'full_reports', name: 'Full Reports', description: 'Access all system reports' },
+                { id: 'billing_management', name: 'Billing Management', description: 'Manage billing and invoices' },
+                { id: 'api_access', name: 'API Access', description: 'Access system APIs' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+            
+            // Mobile menu toggle
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // Agent type selection
+            const agentTypeCards = document.querySelectorAll('.agent-type-card');
+            let selectedType = 'support';
+            
+            agentTypeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selected class from all cards
+                    agentTypeCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+                    
+                    // Get agent type
+                    selectedType = this.dataset.type;
+                    
+                    // Update preview
+                    updateAgentPreview();
+                    
+                    // Update permissions
+                    updatePermissions(selectedType);
+                });
+            });
+            
+            // Set default selection
+            document.querySelector('.agent-type-card[data-type="support"]').classList.add('selected');
+            updatePermissions('support');
+            
+            // Form input listeners for preview
+            const formInputs = document.querySelectorAll('#createAgentForm input, #createAgentForm select');
+            formInputs.forEach(input => {
+                input.addEventListener('input', updateAgentPreview);
+                input.addEventListener('change', updateAgentPreview);
+            });
+            
+            // Form submission
+            const createAgentForm = document.getElementById('createAgentForm');
+            
+            createAgentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const formData = {
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                    confirmPassword: document.getElementById('confirmPassword').value,
+                    agentId: document.getElementById('agentId').value,
+                    agentType: selectedType,
+                    status: document.getElementById('status').value,
+                    permissions: getSelectedPermissions()
+                };
+                
+                // Validation
+                if (!formData.fullName || !formData.email || !formData.username || !formData.password) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                if (formData.password !== formData.confirmPassword) {
+                    showNotification('Passwords do not match', 'error');
+                    return;
+                }
+                
+                if (formData.password.length < 8) {
+                    showNotification('Password must be at least 8 characters long', 'error');
+                    return;
+                }
+                
+                const submitBtn = this.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Agent...';
+                submitBtn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Show success
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Agent Created!';
+                    showNotification('New agent created successfully', 'success');
+                    
+                    // Reset form after delay
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        createAgentForm.reset();
+                        
+                        // Reset agent type
+                        agentTypeCards.forEach(c => c.classList.remove('selected'));
+                        document.querySelector('.agent-type-card[data-type="support"]').classList.add('selected');
+                        selectedType = 'support';
+                        updatePermissions('support');
+                        
+                        // Reset preview
+                        updateAgentPreview();
+                        
+                        // Redirect to manage agents page
+                        setTimeout(() => {
+                            window.location.href = 'manage-agent.html';
+                        }, 2000);
+                    }, 2000);
+                }, 3000);
+            });
+            
+            // Set today's date as default for join date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('joinDate').value = today;
+            
+            // Update preview function
+            function updateAgentPreview() {
+                const name = document.getElementById('fullName').value || 'New Agent';
+                const email = document.getElementById('email').value || 'agent@quantumexpress.com';
+                const agentType = agentTypes[selectedType];
+                
+                // Set avatar initials
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('previewAvatar').textContent = initials;
+                
+                // Set name and email
+                document.getElementById('previewName').textContent = name;
+                document.getElementById('previewEmail').textContent = email;
+                
+                // Set type
+                document.getElementById('previewType').textContent = agentType.name;
+                document.getElementById('previewDescription').textContent = agentType.description;
+                
+                // Show preview
+                document.getElementById('agentPreview').style.display = 'block';
+            }
+            
+            // Update permissions function
+            function updatePermissions(type) {
+                const permissionsGrid = document.getElementById('permissionsGrid');
+                const permissions = permissionsByType[type] || [];
+                
+                permissionsGrid.innerHTML = '';
+                
+                permissions.forEach(permission => {
+                    const permissionItem = document.createElement('div');
+                    permissionItem.className = 'permission-item';
+                    permissionItem.dataset.id = permission.id;
+                    
+                    permissionItem.innerHTML = `
+                        <div class="permission-checkbox">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div>
+                            <div class="permission-label">${permission.name}</div>
+                            <small class="text-muted">${permission.description}</small>
+                        </div>
+                    `;
+                    
+                    // Add click event
+                    permissionItem.addEventListener('click', function() {
+                        this.classList.toggle('selected');
+                    });
+                    
+                    // Select by default for this agent type
+                    permissionItem.classList.add('selected');
+                    
+                    permissionsGrid.appendChild(permissionItem);
+                });
+            }
+            
+            // Get selected permissions
+            function getSelectedPermissions() {
+                const selectedPermissions = [];
+                const permissionItems = document.querySelectorAll('.permission-item.selected');
+                
+                permissionItems.forEach(item => {
+                    selectedPermissions.push(item.dataset.id);
+                });
+                
+                return selectedPermissions;
+            }
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+            
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+            
+            // Initial preview update
+            updateAgentPreview();
+        });
+    </script>
+</body>
+</html>

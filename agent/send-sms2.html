@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send SMS | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+        
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            color: #64748b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* SMS Form Section */
+        .sms-form-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 150px;
+        }
+        
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid #cbd5e1;
+            cursor: pointer;
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            color: #475569;
+        }
+        
+        .sms-preview {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .preview-content {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            color: #475569;
+            line-height: 1.5;
+        }
+        
+        .character-count {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        /* Recipients Section */
+        .recipients-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .recipients-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            background: #f8fafc;
+        }
+        
+        .recipient-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .recipient-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recipient-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .recipient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .recipient-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .recipient-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .remove-recipient {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-recipient:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Schedule Section */
+        .schedule-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .schedule-options {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .schedule-option {
+            flex: 1;
+            text-align: center;
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .schedule-option:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .schedule-option.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .schedule-option i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .schedule-option h5 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .schedule-option p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .schedule-options {
+                flex-direction: column;
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .search-box input:focus {
+                width: 220px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index2.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier2.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+            </a>
+
+            <a href="manage-customer.html" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="delivery-sms2.html" class="menu-item active">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="branch-report.html" class="menu-item ">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>Administrator</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>SMS Management</h1>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Send SMS</h2>
+                    <p>Send SMS notifications to customers, couriers, and agents</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="window.location.href='delivery-sms.html'">
+                        <i class="fas fa-truck"></i> Delivery SMS
+                    </button>
+                    <button class="btn-primary" id="sendSmsBtn">
+                        <i class="fas fa-paper-plane"></i> Send SMS
+                    </button>
+                </div>
+            </div>
+            
+            <!-- SMS Form Section -->
+            <div class="sms-form-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Compose Message</h4>
+                        <p>Write your message and select recipients</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Sender ID</label>
+                        <select class="form-select" id="senderId">
+                            <option value="QEXPRESS">QEXPRESS (QuantumExpress)</option>
+                            <option value="QEXDEL">QEXDEL (Delivery Updates)</option>
+                            <option value="QEXSUP">QEXSUP (Support)</option>
+                            <option value="custom">Custom Sender ID</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Message Type</label>
+                        <select class="form-select" id="messageType">
+                            <option value="notification">Notification</option>
+                            <option value="promotional">Promotional</option>
+                            <option value="transactional">Transactional</option>
+                            <option value="alert">Alert</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Message Content</label>
+                    <textarea class="form-textarea" id="messageContent" placeholder="Type your message here... (Max 160 characters per SMS)" maxlength="480"></textarea>
+                    <div class="character-count">
+                        <span id="charCount">0</span> characters
+                        <span id="smsCount">0 SMS</span>
+                    </div>
+                </div>
+                
+                <div class="sms-preview">
+                    <div class="preview-header">
+                        <div class="preview-title">Message Preview</div>
+                        <div class="text-muted" id="previewRecipientCount">0 recipients</div>
+                    </div>
+                    <div class="preview-content" id="messagePreview">
+                        Your message will appear here...
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recipients Section -->
+            <div class="recipients-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Select Recipients</h4>
+                        <p>Choose who will receive this message</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="clearRecipientsBtn">
+                            <i class="fas fa-times"></i> Clear All
+                        </button>
+                        <button class="btn-primary" id="addRecipientsBtn">
+                            <i class="fas fa-user-plus"></i> Add Recipients
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Recipient Groups</label>
+                        <select class="form-select" id="recipientGroups" multiple>
+                            <option value="all_customers">All Customers</option>
+                            <option value="active_customers">Active Customers</option>
+                            <option value="premium_customers">Premium Customers</option>
+                            <option value="all_couriers">All Couriers</option>
+                            <option value="active_couriers">Active Couriers</option>
+                            <option value="all_agents">All Agents</option>
+                        </select>
+                        <small class="text-muted">Hold Ctrl/Cmd to select multiple groups</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Individual Numbers</label>
+                        <textarea class="form-control" id="individualNumbers" placeholder="Enter phone numbers separated by commas or new lines" rows="3"></textarea>
+                        <small class="text-muted">Example: +1234567890, +9876543210</small>
+                    </div>
+                </div>
+                
+                <div class="recipients-list" id="recipientsList">
+                    <!-- Recipients will be added here dynamically -->
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-user-friends fa-2x mb-3"></i>
+                        <p>No recipients selected yet</p>
+                        <small>Add recipients using the buttons above</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Schedule Section -->
+            <div class="schedule-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Schedule Delivery</h4>
+                        <p>Choose when to send the messages</p>
+                    </div>
+                </div>
+                
+                <div class="schedule-options" id="scheduleOptions">
+                    <div class="schedule-option active" data-schedule="now">
+                        <i class="fas fa-paper-plane"></i>
+                        <h5>Send Now</h5>
+                        <p>Send messages immediately</p>
+                    </div>
+                    <div class="schedule-option" data-schedule="later">
+                        <i class="fas fa-clock"></i>
+                        <h5>Schedule Later</h5>
+                        <p>Send at a specific time</p>
+                    </div>
+                    <div class="schedule-option" data-schedule="recurring">
+                        <i class="fas fa-redo"></i>
+                        <h5>Recurring</h5>
+                        <p>Send messages regularly</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid" id="scheduleDetails" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="scheduleDateTime">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Time Zone</label>
+                        <select class="form-select" id="timeZone">
+                            <option value="UTC-5">EST (UTC-5)</option>
+                            <option value="UTC-8">PST (UTC-8)</option>
+                            <option value="UTC+0">GMT (UTC+0)</option>
+                            <option value="UTC+5.5">IST (UTC+5:30)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="saveTemplate">
+                        <label class="form-check-label" for="saveTemplate">Save as template for future use</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary Section -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted">
+                    Estimated cost: <span id="estimatedCost">$0.00</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="previewBtn">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <button class="btn-primary" id="sendNowBtn">
+                        <i class="fas fa-paper-plane"></i> Send Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // Sample recipients data
+            const sampleRecipients = [
+                { id: 1, name: "John Smith", phone: "+1 (555) 123-4567", type: "customer", avatarColor: "#6366f1" },
+                { id: 2, name: "Sarah Johnson", phone: "+1 (555) 234-5678", type: "customer", avatarColor: "#8b5cf6" },
+                { id: 3, name: "Mike Wilson", phone: "+1 (555) 345-6789", type: "courier", avatarColor: "#10b981" },
+                { id: 4, name: "Emily Davis", phone: "+1 (555) 456-7890", type: "agent", avatarColor: "#f59e0b" },
+                { id: 5, name: "Robert Brown", phone: "+1 (555) 567-8901", type: "customer", avatarColor: "#6366f1" },
+                { id: 6, name: "Lisa Miller", phone: "+1 (555) 678-9012", type: "customer", avatarColor: "#8b5cf6" }
+            ];
+            
+            let selectedRecipients = [];
+            let isScheduled = false;
+            
+            // Character count and SMS count
+            const messageContent = document.getElementById('messageContent');
+            const charCount = document.getElementById('charCount');
+            const smsCount = document.getElementById('smsCount');
+            const messagePreview = document.getElementById('messagePreview');
+            
+            messageContent.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = length;
+                
+                // Calculate number of SMS (160 characters per SMS)
+                const sms = Math.ceil(length / 160);
+                smsCount.textContent = sms + " SMS";
+                
+                // Update preview
+                messagePreview.textContent = this.value || "Your message will appear here...";
+                
+                // Update estimated cost
+                updateEstimatedCost();
+            });
+            
+            // Schedule options
+            const scheduleOptions = document.querySelectorAll('.schedule-option');
+            const scheduleDetails = document.getElementById('scheduleDetails');
+            
+            scheduleOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    scheduleOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const scheduleType = this.dataset.schedule;
+                    if (scheduleType === 'later') {
+                        scheduleDetails.style.display = 'grid';
+                        isScheduled = true;
+                    } else if (scheduleType === 'recurring') {
+                        scheduleDetails.style.display = 'grid';
+                        isScheduled = true;
+                    } else {
+                        scheduleDetails.style.display = 'none';
+                        isScheduled = false;
+                    }
+                });
+            });
+            
+            // Add recipients functionality
+            const addRecipientsBtn = document.getElementById('addRecipientsBtn');
+            const clearRecipientsBtn = document.getElementById('clearRecipientsBtn');
+            const recipientsList = document.getElementById('recipientsList');
+            const previewRecipientCount = document.getElementById('previewRecipientCount');
+            
+            addRecipientsBtn.addEventListener('click', function() {
+                // In a real app, this would open a modal to select recipients
+                // For demo, add some sample recipients
+                sampleRecipients.forEach(recipient => {
+                    if (!selectedRecipients.find(r => r.id === recipient.id)) {
+                        selectedRecipients.push(recipient);
+                        addRecipientToDOM(recipient);
+                    }
+                });
+                
+                updateRecipientCount();
+                updateEstimatedCost();
+            });
+            
+            clearRecipientsBtn.addEventListener('click', function() {
+                selectedRecipients = [];
+                recipientsList.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-user-friends fa-2x mb-3"></i>
+                        <p>No recipients selected yet</p>
+                        <small>Add recipients using the buttons above</small>
+                    </div>
+                `;
+                updateRecipientCount();
+                updateEstimatedCost();
+            });
+            
+            function addRecipientToDOM(recipient) {
+                const existingEmptyState = recipientsList.querySelector('.text-center');
+                if (existingEmptyState) {
+                    existingEmptyState.remove();
+                }
+                
+                const recipientItem = document.createElement('div');
+                recipientItem.className = 'recipient-item';
+                recipientItem.dataset.id = recipient.id;
+                
+                const initials = recipient.name.split(' ').map(n => n[0]).join('');
+                
+                recipientItem.innerHTML = `
+                    <div class="recipient-info">
+                        <div class="recipient-avatar" style="background: ${recipient.avatarColor}">${initials}</div>
+                        <div class="recipient-details">
+                            <h6>${recipient.name}</h6>
+                            <p>${recipient.phone} • ${recipient.type}</p>
+                        </div>
+                    </div>
+                    <button class="remove-recipient" onclick="removeRecipient(${recipient.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                recipientsList.appendChild(recipientItem);
+            }
+            
+            window.removeRecipient = function(id) {
+                selectedRecipients = selectedRecipients.filter(r => r.id !== id);
+                
+                const recipientItem = recipientsList.querySelector(`[data-id="${id}"]`);
+                if (recipientItem) {
+                    recipientItem.remove();
+                }
+                
+                if (selectedRecipients.length === 0) {
+                    recipientsList.innerHTML = `
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-user-friends fa-2x mb-3"></i>
+                            <p>No recipients selected yet</p>
+                            <small>Add recipients using the buttons above</small>
+                        </div>
+                    `;
+                }
+                
+                updateRecipientCount();
+                updateEstimatedCost();
+            };
+            
+            function updateRecipientCount() {
+                previewRecipientCount.textContent = selectedRecipients.length + " recipients";
+            }
+            
+            function updateEstimatedCost() {
+                const messageLength = messageContent.value.length;
+                const smsCount = Math.ceil(messageLength / 160);
+                const recipientCount = selectedRecipients.length;
+                const costPerSms = 0.05; // $0.05 per SMS
+                
+                const totalCost = (smsCount * recipientCount * costPerSms).toFixed(2);
+                document.getElementById('estimatedCost').textContent = "$" + totalCost;
+            }
+            
+            // Send SMS functionality
+            const sendNowBtn = document.getElementById('sendNowBtn');
+            const sendSmsBtn = document.getElementById('sendSmsBtn');
+            
+            sendNowBtn.addEventListener('click', function() {
+                const message = messageContent.value.trim();
+                const senderId = document.getElementById('senderId').value;
+                const messageType = document.getElementById('messageType').value;
+                
+                if (!message) {
+                    showNotification('Please enter a message', 'error');
+                    return;
+                }
+                
+                if (selectedRecipients.length === 0) {
+                    showNotification('Please select at least one recipient', 'error');
+                    return;
+                }
+                
+                const scheduleType = document.querySelector('.schedule-option.active').dataset.schedule;
+                let scheduleInfo = '';
+                
+                if (scheduleType === 'later') {
+                    const dateTime = document.getElementById('scheduleDateTime').value;
+                    if (!dateTime) {
+                        showNotification('Please select date and time for scheduling', 'error');
+                        return;
+                    }
+                    scheduleInfo = `Scheduled for ${new Date(dateTime).toLocaleString()}`;
+                } else if (scheduleType === 'recurring') {
+                    scheduleInfo = 'Recurring message';
+                } else {
+                    scheduleInfo = 'Sent immediately';
+                }
+                
+                // In a real app, this would make an API call
+                showNotification(`SMS sent successfully to ${selectedRecipients.length} recipients! ${scheduleInfo}`, 'success');
+                
+                // Reset form
+                messageContent.value = '';
+                charCount.textContent = '0';
+                smsCount.textContent = '0 SMS';
+                messagePreview.textContent = 'Your message will appear here...';
+                selectedRecipients = [];
+                recipientsList.innerHTML = `
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-user-friends fa-2x mb-3"></i>
+                        <p>No recipients selected yet</p>
+                        <small>Add recipients using the buttons above</small>
+                    </div>
+                `;
+                updateRecipientCount();
+                updateEstimatedCost();
+            });
+            
+            sendSmsBtn.addEventListener('click', function() {
+                // Scroll to send button
+                sendNowBtn.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Preview button
+            const previewBtn = document.getElementById('previewBtn');
+            previewBtn.addEventListener('click', function() {
+                const message = messageContent.value.trim();
+                if (!message) {
+                    showNotification('Please enter a message to preview', 'error');
+                    return;
+                }
+                
+                if (selectedRecipients.length === 0) {
+                    showNotification('Please select recipients to preview', 'error');
+                    return;
+                }
+                
+                showNotification(`Preview: Message will be sent to ${selectedRecipients.length} recipients`, 'info');
+            });
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+            
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+            
+            // Initialize with some sample data
+            setTimeout(() => {
+                messageContent.value = "Hello! Your QuantumExpress shipment #QE-7845 is out for delivery today. Estimated delivery: 2-4 PM. Track here: qexpress.com/track/QE-7845";
+                messageContent.dispatchEvent(new Event('input'));
+                
+                // Add some sample recipients
+                sampleRecipients.slice(0, 3).forEach(recipient => {
+                    selectedRecipients.push(recipient);
+                    addRecipientToDOM(recipient);
+                });
+                updateRecipientCount();
+                updateEstimatedCost();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

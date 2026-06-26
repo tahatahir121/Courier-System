@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery SMS | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+        
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            color: #64748b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Delivery Templates */
+        .templates-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .template-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .template-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .template-card.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        
+        .template-title h5 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .template-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .badge-automatic {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-manual {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .template-content {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+        
+        .template-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        /* Delivery Status */
+        .status-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .status-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .icon-pending {
+            background: #f59e0b;
+        }
+        
+        .icon-delivered {
+            background: #10b981;
+        }
+        
+        .icon-failed {
+            background: #ef4444;
+        }
+        
+        .icon-scheduled {
+            background: #6366f1;
+        }
+        
+        .status-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-card p {
+            color: #64748b;
+        }
+        
+        /* Recent Deliveries */
+        .deliveries-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .deliveries-table th {
+            text-align: left;
+            padding: 1rem;
+            color: #64748b;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .deliveries-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .delivery-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-sent {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .search-box input:focus {
+                width: 220px;
+            }
+            
+            .deliveries-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index2.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier2.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+            </a>
+ 
+
+            <a href="delivery-sms2.html" class="menu-item active">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="branch-report.html" class="menu-item ">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>Administrator</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>Delivery SMS</h1>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search deliveries..." id="searchInput">
+                </div>
+                
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Delivery SMS Templates</h2>
+                    <p>Manage automated delivery notifications and templates</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="window.location.href='send-sms.html'">
+                        <i class="fas fa-paper-plane"></i> Send SMS
+                    </button>
+                    <button class="btn-primary" id="addTemplateBtn">
+                        <i class="fas fa-plus"></i> Add Template
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Delivery Status -->
+            <div class="status-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>SMS Delivery Status</h4>
+                        <p>Overview of SMS delivery performance</p>
+                    </div>
+                </div>
+                
+                <div class="status-grid">
+                    <div class="status-card">
+                        <div class="status-icon icon-pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>1,245</h3>
+                        <p>Pending Delivery</p>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-icon icon-delivered">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>8,942</h3>
+                        <p>Successfully Delivered</p>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-icon icon-failed">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <h3>156</h3>
+                        <p>Failed Deliveries</p>
+                    </div>
+                    
+                    <div class="status-card">
+                        <div class="status-icon icon-scheduled">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3>324</h3>
+                        <p>Scheduled SMS</p>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Recent SMS Deliveries</h4>
+                        <p>Latest delivery notifications sent</p>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="deliveries-table">
+                        <thead>
+                            <tr>
+                                <th>Recipient</th>
+                                <th>Template</th>
+                                <th>Shipment</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deliveriesTable">
+                            <!-- Delivery data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Delivery Templates -->
+            <div class="templates-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Delivery SMS Templates</h4>
+                        <p>Predefined templates for shipment notifications</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="refreshTemplatesBtn">
+                            <i class="fas fa-redo"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="templates-grid" id="templatesGrid">
+                    <!-- Templates will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Automated Delivery Settings -->
+            <div class="templates-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Automated Delivery Settings</h4>
+                        <p>Configure automatic SMS notifications</p>
+                    </div>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="enableAutoSms" checked>
+                        <label class="form-check-label" for="enableAutoSms">Enable automated delivery SMS</label>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Send on Order Confirmation</label>
+                            <select class="form-select" id="orderConfirmation">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label class="form-label">Send on Dispatch</label>
+                            <select class="form-select" id="dispatchNotification">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Send on Out for Delivery</label>
+                            <select class="form-select" id="outForDelivery">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label class="form-label">Send on Delivery</label>
+                            <select class="form-select" id="deliveryNotification">
+                                <option value="yes" selected>Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-muted">
+                        Last updated: <span id="lastUpdated">Today, 10:30 AM</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="resetSettingsBtn">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button class="btn-primary" id="saveSettingsBtn">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // Delivery templates data
+            const deliveryTemplates = [
+                {
+                    id: 1,
+                    name: "Order Confirmation",
+                    content: "Your QuantumExpress order #{{order_id}} has been confirmed. Expected delivery: {{delivery_date}}. Track: qexpress.com/track/{{order_id}}",
+                    type: "automatic",
+                    lastUsed: "2 hours ago",
+                    usageCount: 1245
+                },
+                {
+                    id: 2,
+                    name: "Shipment Dispatched",
+                    content: "Your shipment #{{shipment_id}} has been dispatched and is on its way. Current location: {{location}}. ETA: {{eta}}",
+                    type: "automatic",
+                    lastUsed: "1 hour ago",
+                    usageCount: 892
+                },
+                {
+                    id: 3,
+                    name: "Out for Delivery",
+                    content: "Good news! Your QuantumExpress package #{{shipment_id}} is out for delivery today. Estimated delivery: {{time}}. Courier: {{courier_name}}",
+                    type: "automatic",
+                    lastUsed: "30 minutes ago",
+                    usageCount: 756
+                },
+                {
+                    id: 4,
+                    name: "Delivery Successful",
+                    content: "Your QuantumExpress package #{{shipment_id}} has been delivered successfully. Thank you for choosing QuantumExpress!",
+                    type: "automatic",
+                    lastUsed: "15 minutes ago",
+                    usageCount: 689
+                },
+                {
+                    id: 5,
+                    name: "Delivery Attempt Failed",
+                    content: "We attempted to deliver your package #{{shipment_id}} but couldn't reach you. Please schedule redelivery: qexpress.com/reschedule",
+                    type: "automatic",
+                    lastUsed: "1 day ago",
+                    usageCount: 45
+                },
+                {
+                    id: 6,
+                    name: "Custom Notification",
+                    content: "Custom message for special delivery instructions or promotional offers",
+                    type: "manual",
+                    lastUsed: "3 days ago",
+                    usageCount: 23
+                }
+            ];
+            
+            // Recent deliveries data
+            const recentDeliveries = [
+                {
+                    id: 1,
+                    recipient: "John Smith",
+                    template: "Out for Delivery",
+                    shipment: "QE-7845",
+                    status: "delivered",
+                    time: "10:30 AM"
+                },
+                {
+                    id: 2,
+                    recipient: "Sarah Johnson",
+                    template: "Order Confirmation",
+                    shipment: "QE-7846",
+                    status: "sent",
+                    time: "10:15 AM"
+                },
+                {
+                    id: 3,
+                    recipient: "Mike Wilson",
+                    template: "Delivery Successful",
+                    shipment: "QE-7843",
+                    status: "delivered",
+                    time: "9:45 AM"
+                },
+                {
+                    id: 4,
+                    recipient: "Emily Davis",
+                    template: "Shipment Dispatched",
+                    shipment: "QE-7847",
+                    status: "sent",
+                    time: "9:30 AM"
+                },
+                {
+                    id: 5,
+                    recipient: "Robert Brown",
+                    template: "Delivery Attempt Failed",
+                    shipment: "QE-7842",
+                    status: "failed",
+                    time: "Yesterday"
+                },
+                {
+                    id: 6,
+                    recipient: "Lisa Miller",
+                    template: "Custom Notification",
+                    shipment: "QE-7848",
+                    status: "pending",
+                    time: "Yesterday"
+                }
+            ];
+            
+            // Load templates
+            function loadTemplates() {
+                const templatesGrid = document.getElementById('templatesGrid');
+                templatesGrid.innerHTML = '';
+                
+                deliveryTemplates.forEach(template => {
+                    const templateCard = document.createElement('div');
+                    templateCard.className = 'template-card';
+                    templateCard.dataset.id = template.id;
+                    
+                    templateCard.innerHTML = `
+                        <div class="template-header">
+                            <div class="template-title">
+                                <h5>${template.name}</h5>
+                                <small class="text-muted">${template.type === 'automatic' ? 'Auto-sent on delivery events' : 'Manual sending only'}</small>
+                            </div>
+                            <span class="template-badge ${template.type === 'automatic' ? 'badge-automatic' : 'badge-manual'}">
+                                ${template.type === 'automatic' ? 'Automatic' : 'Manual'}
+                            </span>
+                        </div>
+                        <div class="template-content">
+                            ${template.content}
+                        </div>
+                        <div class="template-meta">
+                            <span>Used ${template.usageCount} times</span>
+                            <span>Last used: ${template.lastUsed}</span>
+                        </div>
+                    `;
+                    
+                    templateCard.addEventListener('click', function() {
+                        // Remove active class from all cards
+                        document.querySelectorAll('.template-card').forEach(card => {
+                            card.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked card
+                        this.classList.add('active');
+                        
+                        // Show template details
+                        showTemplateDetails(template);
+                    });
+                    
+                    templatesGrid.appendChild(templateCard);
+                });
+            }
+            
+            // Load recent deliveries
+            function loadRecentDeliveries() {
+                const deliveriesTable = document.getElementById('deliveriesTable');
+                deliveriesTable.innerHTML = '';
+                
+                recentDeliveries.forEach(delivery => {
+                    const statusClass = `status-${delivery.status}`;
+                    const statusText = delivery.status.charAt(0).toUpperCase() + delivery.status.slice(1);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${delivery.recipient}</td>
+                        <td>${delivery.template}</td>
+                        <td>${delivery.shipment}</td>
+                        <td><span class="delivery-status ${statusClass}">${statusText}</span></td>
+                        <td>${delivery.time}</td>
+                    `;
+                    
+                    deliveriesTable.appendChild(row);
+                });
+            }
+            
+            // Show template details
+            function showTemplateDetails(template) {
+                showNotification(`Selected template: ${template.name}`, 'info');
+            }
+            
+            // Add template button
+            const addTemplateBtn = document.getElementById('addTemplateBtn');
+            addTemplateBtn.addEventListener('click', function() {
+                showNotification('Add new template feature coming soon!', 'info');
+            });
+            
+            // Refresh templates
+            const refreshTemplatesBtn = document.getElementById('refreshTemplatesBtn');
+            refreshTemplatesBtn.addEventListener('click', function() {
+                loadTemplates();
+                loadRecentDeliveries();
+                showNotification('Templates refreshed successfully', 'success');
+            });
+            
+            // Save settings
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            saveSettingsBtn.addEventListener('click', function() {
+                const lastUpdated = new Date().toLocaleString('en-US', {
+                    weekday: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                document.getElementById('lastUpdated').textContent = lastUpdated;
+                showNotification('Delivery settings saved successfully', 'success');
+            });
+            
+            // Reset settings
+            const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+            resetSettingsBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all delivery settings to default?')) {
+                    document.getElementById('enableAutoSms').checked = true;
+                    document.getElementById('orderConfirmation').value = 'yes';
+                    document.getElementById('dispatchNotification').value = 'yes';
+                    document.getElementById('outForDelivery').value = 'yes';
+                    document.getElementById('deliveryNotification').value = 'yes';
+                    document.getElementById('lastUpdated').textContent = 'Just now';
+                    showNotification('Settings reset to default values', 'success');
+                }
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                if (searchTerm) {
+                    const filteredDeliveries = recentDeliveries.filter(delivery => 
+                        delivery.recipient.toLowerCase().includes(searchTerm) ||
+                        delivery.shipment.toLowerCase().includes(searchTerm) ||
+                        delivery.template.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    // Update table with filtered results
+                    const deliveriesTable = document.getElementById('deliveriesTable');
+                    deliveriesTable.innerHTML = '';
+                    
+                    filteredDeliveries.forEach(delivery => {
+                        const statusClass = `status-${delivery.status}`;
+                        const statusText = delivery.status.charAt(0).toUpperCase() + delivery.status.slice(1);
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${delivery.recipient}</td>
+                            <td>${delivery.template}</td>
+                            <td>${delivery.shipment}</td>
+                            <td><span class="delivery-status ${statusClass}">${statusText}</span></td>
+                            <td>${delivery.time}</td>
+                        `;
+                        
+                        deliveriesTable.appendChild(row);
+                    });
+                } else {
+                    loadRecentDeliveries();
+                }
+            });
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+            
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+            
+            // Initialize
+            loadTemplates();
+            loadRecentDeliveries();
+            
+            // Select first template by default
+            setTimeout(() => {
+                const firstTemplate = document.querySelector('.template-card');
+                if (firstTemplate) {
+                    firstTemplate.classList.add('active');
+                    showTemplateDetails(deliveryTemplates[0]);
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

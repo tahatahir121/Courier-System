@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customers | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+        
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            color: #64748b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-info p {
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            background: var(--gradient);
+        }
+        
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .filter-group {
+            margin-bottom: 0;
+        }
+        
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .filter-select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        /* Customers Grid */
+        .customers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .customer-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-top: 5px solid;
+        }
+        
+        .customer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .customer-card.regular {
+            border-color: #6366f1;
+        }
+        
+        .customer-card.premium {
+            border-color: #f59e0b;
+        }
+        
+        .customer-card.business {
+            border-color: #8b5cf6;
+        }
+        
+        .customer-card.vip {
+            border-color: #10b981;
+        }
+        
+        .customer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .customer-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .customer-info h4 {
+            margin-bottom: 0.3rem;
+        }
+        
+        .customer-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .customer-type {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .regular .customer-type {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+        }
+        
+        .premium .customer-type {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .business .customer-type {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+        
+        .vip .customer-type {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .customer-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .customer-details {
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .detail-label {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+        }
+        
+        .customer-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.6rem;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn.view {
+            color: var(--primary);
+        }
+        
+        .action-btn.edit {
+            color: #f59e0b;
+        }
+        
+        .action-btn.delete {
+            color: #ef4444;
+        }
+        
+        .action-btn:hover {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+        
+        /* Customer Activity */
+        .activity-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .activity-table th {
+            text-align: left;
+            padding: 1rem;
+            color: #64748b;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .activity-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .activity-customer {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .activity-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .activity-action {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .action-shipment {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .action-payment {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .action-support {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .customers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .search-box input:focus {
+                width: 220px;
+            }
+            
+            .activity-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="index2.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+                <span class="menu-badge">24</span>
+            </a>
+            <a href="manage-agent.html" class="menu-item">
+                <i class="fas fa-user-tie"></i>
+                <span>Agents</span>
+                <span class="menu-badge">8</span>
+            </a>
+            <a href="manage-customer.html" class="menu-item active">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+                <span class="menu-badge">125</span>
+            </a>
+            <a href="delivery-sms.html" class="menu-item">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="shipment-report.html" class="menu-item ">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>Administrator</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>Customer Management</h1>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search customers..." id="searchInput">
+                </div>
+                
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>All Customers</h2>
+                    <p>Manage your customers and their shipments</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="filterBtn">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <button class="btn-primary" onclick="window.location.href='create-customer.html'">
+                        <i class="fas fa-user-plus"></i> Add New Customer
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>125</h3>
+                        <p>Total Customers</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>89</h3>
+                        <p>Active Customers</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>342</h3>
+                        <p>This Month Shipments</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>4.8</h3>
+                        <p>Avg. Rating</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters Section -->
+            <div class="filters-section" id="filtersSection" style="display: none;">
+                <div class="filters-header">
+                    <h4>Filter Customers</h4>
+                    <button class="btn-secondary" id="clearFiltersBtn">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Customer Type</label>
+                        <select class="filter-select" id="typeFilter">
+                            <option value="all">All Types</option>
+                            <option value="regular">Regular</option>
+                            <option value="premium">Premium</option>
+                            <option value="business">Business</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Location</label>
+                        <select class="filter-select" id="locationFilter">
+                            <option value="all">All Locations</option>
+                            <option value="us">United States</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="ca">Canada</option>
+                            <option value="au">Australia</option>
+                            <option value="eu">Europe</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Sort By</label>
+                        <select class="filter-select" id="sortFilter">
+                            <option value="name">Name (A-Z)</option>
+                            <option value="name-desc">Name (Z-A)</option>
+                            <option value="recent">Most Recent</option>
+                            <option value="shipments">Shipments Count</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Customers Grid -->
+            <div class="customers-grid" id="customersGrid">
+                <!-- Customer cards will be dynamically loaded here -->
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <div class="activity-header">
+                    <h3>Recent Customer Activity</h3>
+                    <button class="btn-secondary" onclick="viewAllActivity()">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivity">
+                            <!-- Activity will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted">
+                    Showing <span id="startIndex">1</span>-<span id="endIndex">6</span> of <span id="totalCustomers">125</span> customers
+                </div>
+                <div class="pagination-buttons">
+                    <button class="action-btn" id="prevPageBtn" disabled>
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <button class="action-btn" id="nextPageBtn">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Sample customer data
+        const customersData = [
+            {
+                id: 1,
+                name: "TechNova Solutions",
+                email: "contact@technova.com",
+                phone: "+1 (555) 123-4567",
+                type: "business",
+                status: "active",
+                customerId: "QE-C001",
+                joinDate: "2021-03-15",
+                location: "us",
+                shipments: 145,
+                totalSpent: "$45,820",
+                lastShipment: "2 days ago",
+                avatarColor: "#8b5cf6",
+                contactPerson: "Michael Chen",
+                companySize: "50-100 employees"
+            },
+            {
+                id: 2,
+                name: "Sarah Johnson",
+                email: "sarah.j@email.com",
+                phone: "+1 (555) 234-5678",
+                type: "premium",
+                status: "active",
+                customerId: "QE-C002",
+                joinDate: "2022-01-20",
+                location: "us",
+                shipments: 89,
+                totalSpent: "$12,450",
+                lastShipment: "Yesterday",
+                avatarColor: "#f59e0b",
+                contactPerson: "Sarah Johnson",
+                companySize: "Individual"
+            },
+            {
+                id: 3,
+                name: "Global Imports Ltd",
+                email: "orders@globalimports.com",
+                phone: "+44 (20) 7123 4567",
+                type: "vip",
+                status: "active",
+                customerId: "QE-C003",
+                joinDate: "2020-11-05",
+                location: "uk",
+                shipments: 320,
+                totalSpent: "$128,750",
+                lastShipment: "Today",
+                avatarColor: "#10b981",
+                contactPerson: "Robert Wilson",
+                companySize: "200+ employees"
+            },
+            {
+                id: 4,
+                name: "David Miller",
+                email: "david.m@email.com",
+                phone: "+1 (555) 345-6789",
+                type: "regular",
+                status: "active",
+                customerId: "QE-C004",
+                joinDate: "2022-05-10",
+                location: "ca",
+                shipments: 23,
+                totalSpent: "$3,210",
+                lastShipment: "1 week ago",
+                avatarColor: "#6366f1",
+                contactPerson: "David Miller",
+                companySize: "Individual"
+            },
+            {
+                id: 5,
+                name: "MediCare Supplies",
+                email: "supplies@medicare.com",
+                phone: "+1 (555) 456-7890",
+                type: "business",
+                status: "active",
+                customerId: "QE-C005",
+                joinDate: "2021-08-22",
+                location: "us",
+                shipments: 187,
+                totalSpent: "$67,890",
+                lastShipment: "3 days ago",
+                avatarColor: "#8b5cf6",
+                contactPerson: "Dr. Lisa Park",
+                companySize: "100-200 employees"
+            },
+            {
+                id: 6,
+                name: "Emily Rodriguez",
+                email: "emily.r@email.com",
+                phone: "+1 (555) 567-8901",
+                type: "premium",
+                status: "inactive",
+                customerId: "QE-C006",
+                joinDate: "2022-02-14",
+                location: "us",
+                shipments: 45,
+                totalSpent: "$8,900",
+                lastShipment: "1 month ago",
+                avatarColor: "#f59e0b",
+                contactPerson: "Emily Rodriguez",
+                companySize: "Individual"
+            },
+            {
+                id: 7,
+                name: "EcoFriendly Products",
+                email: "orders@ecofriendly.com",
+                phone: "+61 (2) 9876 5432",
+                type: "business",
+                status: "active",
+                customerId: "QE-C007",
+                joinDate: "2022-07-30",
+                location: "au",
+                shipments: 67,
+                totalSpent: "$21,340",
+                lastShipment: "4 days ago",
+                avatarColor: "#8b5cf6",
+                contactPerson: "James Wilson",
+                companySize: "20-50 employees"
+            },
+            {
+                id: 8,
+                name: "Thomas Anderson",
+                email: "thomas.a@email.com",
+                phone: "+1 (555) 678-9012",
+                type: "vip",
+                status: "active",
+                customerId: "QE-C008",
+                joinDate: "2021-12-01",
+                location: "us",
+                shipments: 156,
+                totalSpent: "$52,100",
+                lastShipment: "Yesterday",
+                avatarColor: "#10b981",
+                contactPerson: "Thomas Anderson",
+                companySize: "Individual"
+            },
+            {
+                id: 9,
+                name: "Fashion Trends Inc",
+                email: "sales@fashiontrends.com",
+                phone: "+33 1 23 45 67 89",
+                type: "business",
+                status: "pending",
+                customerId: "QE-C009",
+                joinDate: "2022-11-15",
+                location: "eu",
+                shipments: 12,
+                totalSpent: "$4,560",
+                lastShipment: "2 weeks ago",
+                avatarColor: "#8b5cf6",
+                contactPerson: "Sophie Martin",
+                companySize: "50-100 employees"
+            },
+            {
+                id: 10,
+                name: "Jennifer Lee",
+                email: "jennifer.l@email.com",
+                phone: "+1 (555) 789-0123",
+                type: "regular",
+                status: "active",
+                customerId: "QE-C010",
+                joinDate: "2022-03-25",
+                location: "ca",
+                shipments: 34,
+                totalSpent: "$5,670",
+                lastShipment: "5 days ago",
+                avatarColor: "#6366f1",
+                contactPerson: "Jennifer Lee",
+                companySize: "Individual"
+            },
+            {
+                id: 11,
+                name: "AutoParts Direct",
+                email: "orders@autoparts.com",
+                phone: "+1 (555) 890-1234",
+                type: "vip",
+                status: "active",
+                customerId: "QE-C011",
+                joinDate: "2020-09-18",
+                location: "us",
+                shipments: 289,
+                totalSpent: "$98,450",
+                lastShipment: "Today",
+                avatarColor: "#10b981",
+                contactPerson: "Carlos Rodriguez",
+                companySize: "150+ employees"
+            },
+            {
+                id: 12,
+                name: "William Taylor",
+                email: "william.t@email.com",
+                phone: "+1 (555) 901-2345",
+                type: "premium",
+                status: "active",
+                customerId: "QE-C012",
+                joinDate: "2022-04-12",
+                location: "us",
+                shipments: 78,
+                totalSpent: "$15,820",
+                lastShipment: "3 days ago",
+                avatarColor: "#f59e0b",
+                contactPerson: "William Taylor",
+                companySize: "Individual"
+            }
+        ];
+
+        // Sample activity data
+        const activityData = [
+            {
+                customer: "Global Imports Ltd",
+                action: "shipment",
+                details: "Created new shipment #QE-7845 to London",
+                time: "2 hours ago"
+            },
+            {
+                customer: "TechNova Solutions",
+                action: "payment",
+                details: "Paid invoice #INV-2023-045 for $2,850",
+                time: "5 hours ago"
+            },
+            {
+                customer: "Sarah Johnson",
+                action: "support",
+                details: "Submitted support ticket #TKT-2341",
+                time: "Yesterday"
+            },
+            {
+                customer: "MediCare Supplies",
+                action: "shipment",
+                details: "Updated shipment status for #QE-7821",
+                time: "2 days ago"
+            },
+            {
+                customer: "AutoParts Direct",
+                action: "payment",
+                details: "Scheduled recurring payment for monthly plan",
+                time: "3 days ago"
+            }
+        ];
+
+        // Customer type display names
+        const customerTypeNames = {
+            regular: "Regular",
+            premium: "Premium",
+            business: "Business",
+            vip: "VIP"
+        };
+
+        // Location display names
+        const locationNames = {
+            us: "United States",
+            uk: "United Kingdom",
+            ca: "Canada",
+            au: "Australia",
+            eu: "Europe"
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+            
+            // Mobile menu toggle
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // Filter toggle
+            const filterBtn = document.getElementById('filterBtn');
+            const filtersSection = document.getElementById('filtersSection');
+            
+            filterBtn.addEventListener('click', function() {
+                if (filtersSection.style.display === 'none') {
+                    filtersSection.style.display = 'block';
+                    this.innerHTML = '<i class="fas fa-times"></i> Hide Filters';
+                } else {
+                    filtersSection.style.display = 'none';
+                    this.innerHTML = '<i class="fas fa-filter"></i> Filter';
+                }
+            });
+            
+            // Clear filters
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            clearFiltersBtn.addEventListener('click', function() {
+                document.getElementById('typeFilter').value = 'all';
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('locationFilter').value = 'all';
+                document.getElementById('sortFilter').value = 'name';
+                loadCustomers();
+                showNotification('Filters cleared successfully', 'success');
+            });
+            
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    loadCustomers();
+                }, 500);
+            });
+            
+            // Filter change listeners
+            document.getElementById('typeFilter').addEventListener('change', loadCustomers);
+            document.getElementById('statusFilter').addEventListener('change', loadCustomers);
+            document.getElementById('locationFilter').addEventListener('change', loadCustomers);
+            document.getElementById('sortFilter').addEventListener('change', loadCustomers);
+            
+            // Pagination
+            let currentPage = 1;
+            const itemsPerPage = 6;
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadCustomers();
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', () => {
+                if (currentPage < Math.ceil(customersData.length / itemsPerPage)) {
+                    currentPage++;
+                    loadCustomers();
+                }
+            });
+            
+            // Load activity
+            loadRecentActivity();
+            
+            // Initial load
+            loadCustomers();
+            
+            function loadCustomers() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const typeFilter = document.getElementById('typeFilter').value;
+                const statusFilter = document.getElementById('statusFilter').value;
+                const locationFilter = document.getElementById('locationFilter').value;
+                const sortFilter = document.getElementById('sortFilter').value;
+                
+                // Filter customers
+                let filteredCustomers = customersData.filter(customer => {
+                    const matchesSearch = customer.name.toLowerCase().includes(searchTerm) ||
+                                        customer.email.toLowerCase().includes(searchTerm) ||
+                                        customer.customerId.toLowerCase().includes(searchTerm) ||
+                                        customer.contactPerson.toLowerCase().includes(searchTerm);
+                    
+                    const matchesType = typeFilter === 'all' || customer.type === typeFilter;
+                    const matchesStatus = statusFilter === 'all' || customer.status === statusFilter;
+                    const matchesLocation = locationFilter === 'all' || customer.location === locationFilter;
+                    
+                    return matchesSearch && matchesType && matchesStatus && matchesLocation;
+                });
+                
+                // Sort customers
+                filteredCustomers.sort((a, b) => {
+                    switch (sortFilter) {
+                        case 'name':
+                            return a.name.localeCompare(b.name);
+                        case 'name-desc':
+                            return b.name.localeCompare(a.name);
+                        case 'recent':
+                            return new Date(b.joinDate) - new Date(a.joinDate);
+                        case 'shipments':
+                            return b.shipments - a.shipments;
+                        default:
+                            return 0;
+                    }
+                });
+                
+                // Pagination
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedCustomers = filteredCustomers.slice(startIndex, endIndex);
+                
+                // Update pagination info
+                document.getElementById('startIndex').textContent = startIndex + 1;
+                document.getElementById('endIndex').textContent = Math.min(endIndex, filteredCustomers.length);
+                document.getElementById('totalCustomers').textContent = filteredCustomers.length;
+                
+                // Update pagination buttons
+                prevPageBtn.disabled = currentPage === 1;
+                nextPageBtn.disabled = currentPage === Math.ceil(filteredCustomers.length / itemsPerPage);
+                
+                // Render customers
+                const customersGrid = document.getElementById('customersGrid');
+                customersGrid.innerHTML = '';
+                
+                if (paginatedCustomers.length === 0) {
+                    customersGrid.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No customers found</h4>
+                            <p class="text-muted">Try adjusting your filters or search term</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                paginatedCustomers.forEach(customer => {
+                    const statusClass = `status-${customer.status}`;
+                    const statusText = customer.status.charAt(0).toUpperCase() + customer.status.slice(1);
+                    const typeText = customerTypeNames[customer.type] || customer.type;
+                    const locationText = locationNames[customer.location] || customer.location;
+                    
+                    const customerCard = document.createElement('div');
+                    customerCard.className = `customer-card ${customer.type}`;
+                    customerCard.innerHTML = `
+                        <div class="customer-header">
+                            <div class="customer-avatar" style="background: ${customer.avatarColor}">${customer.name.split(' ').map(n => n[0]).join('')}</div>
+                            <div class="customer-info">
+                                <h4>${customer.name}</h4>
+                                <p>${customer.email}</p>
+                                <span class="customer-type">${typeText}</span>
+                                <span class="customer-status ${statusClass}">${statusText}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="customer-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Customer ID</span>
+                                <span class="detail-value">${customer.customerId}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Contact</span>
+                                <span class="detail-value">${customer.contactPerson}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Phone</span>
+                                <span class="detail-value">${customer.phone}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value">${locationText}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Total Shipments</span>
+                                <span class="detail-value">${customer.shipments}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Total Spent</span>
+                                <span class="detail-value">${customer.totalSpent}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Last Shipment</span>
+                                <span class="detail-value">${customer.lastShipment}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="customer-actions">
+                            <button class="action-btn view" onclick="viewCustomer(${customer.id})">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="action-btn edit" onclick="editCustomer(${customer.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="action-btn delete" onclick="deleteCustomer(${customer.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    `;
+                    
+                    customersGrid.appendChild(customerCard);
+                });
+            }
+            
+            function loadRecentActivity() {
+                const activityTable = document.getElementById('recentActivity');
+                activityTable.innerHTML = '';
+                
+                activityData.forEach(activity => {
+                    const actionClass = `action-${activity.action}`;
+                    const actionText = activity.action.charAt(0).toUpperCase() + activity.action.slice(1);
+                    const initials = activity.customer.split(' ').map(n => n[0]).join('');
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="activity-customer">
+                                <div class="activity-avatar">${initials}</div>
+                                <div>
+                                    <div><strong>${activity.customer}</strong></div>
+                                    <small class="text-muted">Customer</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="activity-action ${actionClass}">${actionText}</span></td>
+                        <td>${activity.details}</td>
+                        <td>${activity.time}</td>
+                    `;
+                    
+                    activityTable.appendChild(row);
+                });
+            }
+            
+            // Action functions
+window.viewCustomer = function(id) {
+    const customer = customersData.find(c => c.id === id);
+    if (customer) {
+        localStorage.setItem('currentCustomer', JSON.stringify(customer));
+        window.location.href = 'view-customer.html';
+    }
+};
+            window.editCustomer = function(id) {
+                const customer = customersData.find(c => c.id === id);
+                if (customer) {
+                    // Save customer data to localStorage so the edit page can access it
+                    localStorage.setItem('currentCustomer', JSON.stringify(customer));
+                    localStorage.setItem('customerMode', 'edit');
+                    
+                    // Navigate to the view/edit page
+                    showNotification(`Editing customer: ${customer.name}`, 'info');
+                    // In a real app, you would navigate to an edit customer page
+                    // window.location.href = `edit-customer.html`;
+                }
+            };
+            
+            window.deleteCustomer = function(id) {
+                const customer = customersData.find(c => c.id === id);
+                if (customer) {
+                    if (confirm(`Are you sure you want to delete customer "${customer.name}"? This will also delete all associated shipment history.`)) {
+                        // In a real app, you would make an API call here
+                        const index = customersData.findIndex(c => c.id === id);
+                        if (index !== -1) {
+                            customersData.splice(index, 1);
+                            showNotification(`Customer "${customer.name}" deleted successfully`, 'success');
+                            loadCustomers();
+                        }
+                    }
+                }
+            };
+            
+            window.viewAllActivity = function() {
+                showNotification('Loading all customer activity...', 'info');
+                // In a real app, you would navigate to an activity log page
+            };
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+            
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+        });
+    </script>
+</body>
+</html>

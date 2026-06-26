@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Shipment | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+
+        
+        /* Hero Section */
+        .hero-section {
+            background: var(--gradient);
+            color: white;
+            padding: 8rem 2rem;
+            text-align: center;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        /* Tracking Form */
+        .tracking-form-container {
+            max-width: 800px;
+            margin: -60px auto 3rem;
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .tracking-form-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+        
+        .tracking-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tracking-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .tracking-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .track-btn {
+            padding: 1rem 2.5rem;
+            background: var(--gradient);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .track-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+        
+        .multiple-tracking {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .multiple-tracking .form-text {
+            color: #64748b;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .multiple-tracking textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 120px;
+            margin-bottom: 1rem;
+        }
+        
+        .multiple-tracking textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 4rem 2rem;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 16px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.8rem;
+        }
+        
+        .feature-title {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .feature-description {
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        .main-footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .footer-description {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links h4 {
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: none;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            
+            .hero-section {
+                padding: 3rem 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .tracking-form-container {
+                margin: -40px 1rem 3rem;
+                padding: 1.5rem;
+            }
+            
+            .tracking-input-group {
+                flex-direction: column;
+            }
+            
+            .features-section {
+                padding: 3rem 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .track-btn {
+                width: 100%;
+            }
+        }
+
+        .navbar {
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom: none;
+    padding: 1.2rem 0;
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 0.8rem 0;
+}
+
+/* Navbar text on transparent background */
+.navbar:not(.scrolled) .nav-link,
+.navbar:not(.scrolled) .navbar-brand {
+    color: white !important;
+}
+
+/* Brand gradient still visible */
+.navbar:not(.scrolled) .navbar-brand {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Scrolled state text */
+.navbar.scrolled .nav-link {
+    color: var(--dark) !important;
+}
+
+
+        .navbar-brand {
+            font-weight: 900;
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark) !important;
+            margin: 0 0.5rem;
+            position: relative;
+            padding: 0.5rem 0 !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 50px;
+            padding: 0.6rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .navbar:not(.scrolled) .btn-login {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+}
+/* Login button - after scroll */
+.navbar.scrolled .btn-login {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.navbar .btn-login:hover {
+    background: var(--primary);
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+
+
+
+        .btn-register {
+            background: var(--gradient);
+            border: none;
+            color: white;
+            border-radius: 50px;
+            padding: 0.6rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index3.html">
+                <i class="fas fa-bolt"></i> QuantumExpress
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="index3.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index3.html">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index3.html">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index3.html">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="track-consignment.html">Track Order</a>
+                    </li>
+                </ul>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-login">Login</a>
+                    <a href="register.html" class="btn btn-register">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Track Your Shipment</h1>
+            <p class="hero-subtitle">Enter your tracking number to get real-time updates on your package location and estimated delivery time.</p>
+        </div>
+    </section>
+
+    <!-- Tracking Form -->
+    <div class="container">
+        <div class="tracking-form-container">
+            <h2 class="tracking-form-title">Track by Tracking Number</h2>
+            
+            <form id="trackingForm">
+                <div class="tracking-input-group">
+                    <input 
+                        type="text" 
+                        class="tracking-input" 
+                        placeholder="Enter your tracking number (e.g., QE-2023-789456)"
+                        id="trackingNumber"
+                        required
+                    >
+                    <button type="submit" class="track-btn">
+                        <i class="fas fa-search me-2"></i> Track Shipment
+                    </button>
+                </div>
+                
+                <div class="form-text text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Example tracking numbers: QE-2023-789456, QE-2023-123456, QE-2023-654321
+                </div>
+            </form>
+            
+            <div class="multiple-tracking">
+                <h4>Track Multiple Shipments</h4>
+                <span class="form-text">Enter multiple tracking numbers separated by commas or new lines</span>
+                <textarea 
+                    id="multipleTrackingNumbers" 
+                    placeholder="QE-2023-789456, QE-2023-123456, QE-2023-654321"
+                ></textarea>
+                <button class="track-btn" id="trackMultipleBtn">
+                    <i class="fas fa-search me-2"></i> Track All Shipments
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Track With Us</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time Tracking</h3>
+                    <p class="feature-description">
+                        Get live updates on your shipment's location and estimated delivery time.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="feature-title">Notifications</h3>
+                    <p class="feature-description">
+                        Receive SMS and email notifications at every stage of your delivery.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3 class="feature-title">Delivery History</h3>
+                    <p class="feature-description">
+                        Access complete delivery history and proof of delivery documents.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-description">
+                        Our customer support team is available round the clock to assist you.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">QuantumExpress</div>
+                    <p class="footer-description">
+                        Delivering excellence with speed and reliability. Track your shipments in real-time with our advanced tracking system.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="track-consignment.html">Track Shipment</a></li>
+                        <li><a href="view-status.html">View Status</a></li>
+                        <li><a href="print-status.html">Print Label</a></li>
+                        <li><a href="../login.html">Agent Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Express Delivery</a></li>
+                        <li><a href="#">International Shipping</a></li>
+                        <li><a href="#">Same Day Delivery</a></li>
+                        <li><a href="#">Warehouse Services</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone me-2"></i> +1 (800) 123-4567</li>
+                        <li><i class="fas fa-envelope me-2"></i> support@quantumexpress.com</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Delivery St, City, Country</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 QuantumExpress. All rights reserved. | <a href="#" class="text-white">Privacy Policy</a> | <a href="#" class="text-white">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-info-circle me-3 fs-4 text-primary"></i>
+            <div id="notificationMessage">Notification message</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const trackingForm = document.getElementById('trackingForm');
+            const trackMultipleBtn = document.getElementById('trackMultipleBtn');
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notificationMessage');
+            
+            // Single tracking form
+            trackingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const trackingNumber = document.getElementById('trackingNumber').value.trim();
+                
+                if (!trackingNumber) {
+                    showNotification('Please enter a tracking number', 'error');
+                    return;
+                }
+                
+                // Validate tracking number format
+                if (!isValidTrackingNumber(trackingNumber)) {
+                    showNotification('Invalid tracking number format. Please use format: QE-YYYY-XXXXXX', 'error');
+                    return;
+                }
+                
+                showNotification(`Tracking shipment: ${trackingNumber}`, 'info');
+                
+                // Simulate tracking process
+                setTimeout(() => {
+                    // Redirect to view status page with tracking number
+                    window.location.href = `view-status.html?tracking=${encodeURIComponent(trackingNumber)}`;
+                }, 1000);
+            });
+            
+            // Multiple tracking
+            trackMultipleBtn.addEventListener('click', function() {
+                const trackingNumbersText = document.getElementById('multipleTrackingNumbers').value.trim();
+                
+                if (!trackingNumbersText) {
+                    showNotification('Please enter tracking numbers', 'error');
+                    return;
+                }
+                
+                // Split by comma or new line
+                const trackingNumbers = trackingNumbersText.split(/[\n,]/)
+                    .map(num => num.trim())
+                    .filter(num => num.length > 0);
+                
+                if (trackingNumbers.length === 0) {
+                    showNotification('No valid tracking numbers found', 'error');
+                    return;
+                }
+                
+                // Validate all tracking numbers
+                const invalidNumbers = trackingNumbers.filter(num => !isValidTrackingNumber(num));
+                
+                if (invalidNumbers.length > 0) {
+                    showNotification(`Invalid tracking numbers: ${invalidNumbers.join(', ')}`, 'error');
+                    return;
+                }
+                
+                if (trackingNumbers.length === 1) {
+                    // Redirect to single tracking
+                    window.location.href = `view-status.html?tracking=${encodeURIComponent(trackingNumbers[0])}`;
+                } else {
+                    // For multiple tracking, show a summary
+                    showNotification(`Tracking ${trackingNumbers.length} shipments...`, 'info');
+                    
+                    // In a real app, you might have a different page for multiple tracking results
+                    // For now, redirect to view the first one
+                    setTimeout(() => {
+                        window.location.href = `view-status.html?tracking=${encodeURIComponent(trackingNumbers[0])}&multiple=true`;
+                    }, 1500);
+                }
+            });
+            
+            // Validate tracking number format
+            function isValidTrackingNumber(trackingNumber) {
+                // Format: QE-YYYY-XXXXXX where X are digits
+                const pattern = /^QE-\d{4}-\d{6}$/;
+                return pattern.test(trackingNumber);
+            }
+            
+            // Show notification
+            function showNotification(message, type = 'info') {
+                notificationMessage.textContent = message;
+                
+                // Set color based on type
+                if (type === 'error') {
+                    notification.style.background = '#fee';
+                    notification.style.borderColor = '#fca5a5';
+                    notification.querySelector('i').className = 'fas fa-exclamation-triangle me-3 fs-4 text-danger';
+                } else if (type === 'success') {
+                    notification.style.background = '#d1fae5';
+                    notification.style.borderColor = '#a7f3d0';
+                    notification.querySelector('i').className = 'fas fa-check-circle me-3 fs-4 text-success';
+                } else {
+                    notification.style.background = '#e0f2fe';
+                    notification.style.borderColor = '#bae6fd';
+                    notification.querySelector('i').className = 'fas fa-info-circle me-3 fs-4 text-primary';
+                }
+                
+                notification.style.display = 'block';
+                notification.style.animation = 'slideIn 0.3s ease';
+                
+                // Auto hide after 3 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Pre-fill tracking number from URL if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const prefilledTracking = urlParams.get('tracking');
+            if (prefilledTracking) {
+                document.getElementById('trackingNumber').value = prefilledTracking;
+            }
+        });
+
+            window.addEventListener('scroll', function () {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+    </script>
+</body>
+</html>

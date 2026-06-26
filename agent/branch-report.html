@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branch Reports | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+        
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+        
+        /* Report Filters */
+        .report-filters {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-info p {
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .change-up {
+            color: #10b981;
+        }
+        
+        .change-down {
+            color: #ef4444;
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .icon-revenue {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+        
+        .icon-shipments {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        
+        .icon-customers {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+        
+        .icon-success {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        }
+        
+        .progress-wrapper {
+            margin-top: 1rem;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            border-radius: 4px;
+        }
+        
+        /* Charts Section */
+        .charts-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .chart-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 300px;
+            position: relative;
+        }
+        
+        /* Branch Performance Table */
+        .table-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .table-responsive {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+        
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #e2e8f0;
+        }
+        
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .branch-name {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .branch-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .branch-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .branch-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0;
+        }
+        
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-inactive {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        /* Export Section */
+        .export-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .export-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .export-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.15);
+        }
+        
+        .export-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            background: var(--gradient);
+        }
+        
+        .export-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .export-description {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .search-box input:focus {
+                width: 220px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+            
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="../dashboard.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier2.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+            </a>
+
+
+            <a href="delivery-sms2.html" class="menu-item ">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="branch-report.html" class="menu-item active ">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">SW</div>
+                <div class="user-details">
+                    <h6>Sarah Wilson</h6>
+                    <p>Regional Manager</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>Branch Performance Report</h1>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search branches...">
+                </div>
+                
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Report Filters -->
+            <div class="report-filters">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="branchSelect"><i class="fas fa-building me-1"></i> Select Branch</label>
+                        <select id="branchSelect" class="form-select">
+                            <option value="all">All Branches</option>
+                            <option value="north">North Region</option>
+                            <option value="south">South Region</option>
+                            <option value="east">East Region</option>
+                            <option value="west">West Region</option>
+                            <option value="central">Central Region</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateRange"><i class="fas fa-calendar me-1"></i> Date Range</label>
+                        <select id="dateRange" class="form-select">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="week" selected>This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="reportType"><i class="fas fa-chart-bar me-1"></i> Report Type</label>
+                        <select id="reportType" class="form-select">
+                            <option value="performance">Performance Report</option>
+                            <option value="financial">Financial Report</option>
+                            <option value="operations">Operations Report</option>
+                            <option value="comparison">Branch Comparison</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="metricSelect"><i class="fas fa-chart-line me-1"></i> Primary Metric</label>
+                        <select id="metricSelect" class="form-select">
+                            <option value="shipments">Shipment Volume</option>
+                            <option value="revenue">Revenue</option>
+                            <option value="customers">Customer Growth</option>
+                            <option value="success">Success Rate</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button class="btn btn-outline-primary" id="resetFilters">
+                        <i class="fas fa-redo me-1"></i> Reset
+                    </button>
+                    <button class="btn btn-primary" id="generateReport">
+                        <i class="fas fa-chart-bar me-1"></i> Generate Report
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Branch Performance Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>$124,850</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                        <div class="stat-change change-up">
+                            <i class="fas fa-arrow-up"></i> 15.2%
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="progress-wrapper">
+                        <div class="progress-label">
+                            <span>Target: $150,000</span>
+                            <span>83%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: 83%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>8,542</h3>
+                            <p>Total Shipments</p>
+                        </div>
+                        <div class="stat-change change-up">
+                            <i class="fas fa-arrow-up"></i> 12.5%
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-shipments">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="progress-wrapper">
+                        <div class="progress-label">
+                            <span>On-time: 7,890</span>
+                            <span>92.3%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" style="width: 92.3%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>2,145</h3>
+                            <p>Active Customers</p>
+                        </div>
+                        <div class="stat-change change-up">
+                            <i class="fas fa-arrow-up"></i> 8.3%
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-customers">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="progress-wrapper">
+                        <div class="progress-label">
+                            <span>Growth: +164</span>
+                            <span>8.3%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width: 8.3%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-info">
+                            <h3>98.2%</h3>
+                            <p>Success Rate</p>
+                        </div>
+                        <div class="stat-change change-up">
+                            <i class="fas fa-arrow-up"></i> 2.1%
+                        </div>
+                    </div>
+                    <div class="stat-icon icon-success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="progress-wrapper">
+                        <div class="progress-label">
+                            <span>Target: 97%</span>
+                            <span>101.2%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar bg-purple" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Charts -->
+            <div class="charts-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Branch Performance Trends</h4>
+                        <p>Shipment volume and revenue comparison across branches</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary active" id="dailyBtn">Daily</button>
+                        <button class="btn btn-sm btn-outline-primary" id="weeklyBtn">Weekly</button>
+                        <button class="btn btn-sm btn-outline-primary" id="monthlyBtn">Monthly</button>
+                    </div>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <canvas id="shipmentChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Branch Performance Table -->
+            <div class="table-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Branch Performance Details</h4>
+                        <p>Detailed metrics for each branch</p>
+                    </div>
+                    <div class="text-muted">
+                        Showing 8 of 24 branches
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Branch</th>
+                                <th>Manager</th>
+                                <th>Shipments</th>
+                                <th>Revenue</th>
+                                <th>Success Rate</th>
+                                <th>Growth</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="branchTableBody">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted">
+                        Showing 1 to 8 of 24 entries
+                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination mb-0">
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Export Options -->
+            <div class="export-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Export Report</h4>
+                        <p>Download or share this report</p>
+                    </div>
+                </div>
+                
+                <div class="export-options">
+                    <div class="export-card" id="exportPDF">
+                        <div class="export-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="export-title">Export as PDF</div>
+                        <div class="export-description">High-quality printable report</div>
+                    </div>
+                    
+                    <div class="export-card" id="exportExcel">
+                        <div class="export-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="export-title">Export as Excel</div>
+                        <div class="export-description">Spreadsheet with all data</div>
+                    </div>
+                    
+                    <div class="export-card" id="exportCSV">
+                        <div class="export-icon">
+                            <i class="fas fa-file-csv"></i>
+                        </div>
+                        <div class="export-title">Export as CSV</div>
+                        <div class="export-description">Simple comma-separated values</div>
+                    </div>
+                    
+                    <div class="export-card" id="shareReport">
+                        <div class="export-icon">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <div class="export-title">Share Report</div>
+                        <div class="export-description">Share via email or link</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = '../login.html';
+                }
+            });
+            
+            // Filter actions
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            const generateReportBtn = document.getElementById('generateReport');
+            
+            resetFiltersBtn.addEventListener('click', function() {
+                document.getElementById('branchSelect').value = 'all';
+                document.getElementById('dateRange').value = 'week';
+                document.getElementById('reportType').value = 'performance';
+                document.getElementById('metricSelect').value = 'shipments';
+                showNotification('Filters reset to default', 'info');
+            });
+            
+            generateReportBtn.addEventListener('click', function() {
+                showNotification('Generating branch performance report...', 'info');
+                // In real app, would generate report based on filters
+                setTimeout(() => {
+                    showNotification('Report generated successfully!', 'success');
+                }, 1500);
+            });
+            
+            // Export functionality
+            document.getElementById('exportPDF').addEventListener('click', function() {
+                showNotification('Exporting report as PDF...', 'info');
+                setTimeout(() => {
+                    showNotification('PDF report downloaded successfully!', 'success');
+                }, 1000);
+            });
+            
+            document.getElementById('exportExcel').addEventListener('click', function() {
+                showNotification('Exporting report as Excel...', 'info');
+                setTimeout(() => {
+                    showNotification('Excel report downloaded successfully!', 'success');
+                }, 1000);
+            });
+            
+            document.getElementById('exportCSV').addEventListener('click', function() {
+                showNotification('Exporting report as CSV...', 'info');
+                setTimeout(() => {
+                    showNotification('CSV report downloaded successfully!', 'success');
+                }, 1000);
+            });
+            
+            document.getElementById('shareReport').addEventListener('click', function() {
+                showNotification('Generating shareable link...', 'info');
+                setTimeout(() => {
+                    const shareUrl = window.location.href + '?share=report-' + Date.now();
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(shareUrl).then(() => {
+                            showNotification('Report link copied to clipboard!', 'success');
+                        });
+                    } else {
+                        showNotification('Share URL: ' + shareUrl, 'info');
+                    }
+                }, 1000);
+            });
+            
+            // Chart data
+            const branchData = {
+                labels: ['North', 'South', 'East', 'West', 'Central', 'Downtown', 'Uptown', 'Suburban'],
+                shipments: [1250, 980, 1120, 890, 1540, 1320, 1080, 920],
+                revenue: [18500, 14200, 16800, 12500, 24500, 19800, 16200, 13800],
+                successRate: [98.5, 96.2, 97.8, 95.4, 99.1, 98.7, 97.2, 96.8]
+            };
+            
+            // Initialize charts
+            let shipmentChart, revenueChart;
+            
+            function initCharts() {
+                const shipmentCtx = document.getElementById('shipmentChart').getContext('2d');
+                shipmentChart = new Chart(shipmentCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: branchData.labels,
+                        datasets: [{
+                            label: 'Shipments',
+                            data: branchData.shipments,
+                            backgroundColor: '#6366f1',
+                            borderColor: '#4f46e5',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Shipments: ${context.parsed.y}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Shipments'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Branch'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+                revenueChart = new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: branchData.labels,
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: branchData.revenue,
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderColor: '#10b981',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Revenue: $${context.parsed.y.toLocaleString()}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Revenue ($)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Branch'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Chart period buttons
+            document.getElementById('dailyBtn').addEventListener('click', function() {
+                updateChartButtons('daily');
+                // In real app, would fetch daily data
+                showNotification('Loading daily branch data...', 'info');
+            });
+            
+            document.getElementById('weeklyBtn').addEventListener('click', function() {
+                updateChartButtons('weekly');
+                // In real app, would fetch weekly data
+                showNotification('Loading weekly branch data...', 'info');
+            });
+            
+            document.getElementById('monthlyBtn').addEventListener('click', function() {
+                updateChartButtons('monthly');
+                // In real app, would fetch monthly data
+                showNotification('Loading monthly branch data...', 'info');
+            });
+            
+            function updateChartButtons(activePeriod) {
+                document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.getElementById(activePeriod + 'Btn').classList.add('active');
+            }
+            
+            // Branch data
+            const branchList = [
+                {
+                    id: 1,
+                    name: 'North Region',
+                    manager: 'Michael Chen',
+                    shipments: 1250,
+                    revenue: 18500,
+                    successRate: 98.5,
+                    growth: '+12.5%',
+                    status: 'active',
+                    color: '#6366f1'
+                },
+                {
+                    id: 2,
+                    name: 'South Region',
+                    manager: 'Sarah Johnson',
+                    shipments: 980,
+                    revenue: 14200,
+                    successRate: 96.2,
+                    growth: '+8.3%',
+                    status: 'active',
+                    color: '#10b981'
+                },
+                {
+                    id: 3,
+                    name: 'East Region',
+                    manager: 'David Wilson',
+                    shipments: 1120,
+                    revenue: 16800,
+                    successRate: 97.8,
+                    growth: '+15.2%',
+                    status: 'active',
+                    color: '#f59e0b'
+                },
+                {
+                    id: 4,
+                    name: 'West Region',
+                    manager: 'Emma Rodriguez',
+                    shipments: 890,
+                    revenue: 12500,
+                    successRate: 95.4,
+                    growth: '+5.7%',
+                    status: 'active',
+                    color: '#ef4444'
+                },
+                {
+                    id: 5,
+                    name: 'Central Region',
+                    manager: 'James Miller',
+                    shipments: 1540,
+                    revenue: 24500,
+                    successRate: 99.1,
+                    growth: '+18.9%',
+                    status: 'active',
+                    color: '#8b5cf6'
+                },
+                {
+                    id: 6,
+                    name: 'Downtown',
+                    manager: 'Lisa Wang',
+                    shipments: 1320,
+                    revenue: 19800,
+                    successRate: 98.7,
+                    growth: '+11.4%',
+                    status: 'active',
+                    color: '#06b6d4'
+                },
+                {
+                    id: 7,
+                    name: 'Uptown',
+                    manager: 'Robert Brown',
+                    shipments: 1080,
+                    revenue: 16200,
+                    successRate: 97.2,
+                    growth: '+9.8%',
+                    status: 'inactive',
+                    color: '#84cc16'
+                },
+                {
+                    id: 8,
+                    name: 'Suburban',
+                    manager: 'Jennifer Taylor',
+                    shipments: 920,
+                    revenue: 13800,
+                    successRate: 96.8,
+                    growth: '+7.2%',
+                    status: 'active',
+                    color: '#f97316'
+                }
+            ];
+            
+            // Load branch table
+            function loadBranchTable() {
+                const tableBody = document.getElementById('branchTableBody');
+                tableBody.innerHTML = '';
+                
+                branchList.forEach(branch => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div class="branch-name">
+                                <div class="branch-avatar" style="background: ${branch.color}">
+                                    ${branch.name.charAt(0)}
+                                </div>
+                                <div class="branch-details">
+                                    <h6>${branch.name}</h6>
+                                    <p>Branch #${branch.id}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${branch.manager}</td>
+                        <td><strong>${branch.shipments.toLocaleString()}</strong></td>
+                        <td><strong>$${branch.revenue.toLocaleString()}</strong></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-2">${branch.successRate}%</div>
+                                <div class="progress flex-grow-1" style="height: 6px; width: 80px;">
+                                    <div class="progress-bar bg-success" style="width: ${branch.successRate}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="${branch.growth.includes('+') ? 'text-success' : 'text-danger'}">
+                            <strong>${branch.growth}</strong>
+                        </td>
+                        <td>
+                            <span class="status-badge status-${branch.status}">${branch.status === 'active' ? 'Active' : 'Inactive'}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="viewBranchDetails(${branch.id})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="editBranch(${branch.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-outline-info" onclick="generateBranchReport(${branch.id})">
+                                    <i class="fas fa-chart-bar"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // View branch details
+            window.viewBranchDetails = function(branchId) {
+                const branch = branchList.find(b => b.id === branchId);
+                if (branch) {
+                    showNotification(`Viewing details for ${branch.name}`, 'info');
+                    // In real app, would navigate to branch details page
+                }
+            };
+            
+            // Edit branch
+            window.editBranch = function(branchId) {
+                const branch = branchList.find(b => b.id === branchId);
+                if (branch) {
+                    showNotification(`Editing ${branch.name}`, 'info');
+                    // In real app, would open edit modal
+                }
+            };
+            
+            // Generate branch report
+            window.generateBranchReport = function(branchId) {
+                const branch = branchList.find(b => b.id === branchId);
+                if (branch) {
+                    showNotification(`Generating report for ${branch.name}...`, 'info');
+                    setTimeout(() => {
+                        showNotification(`Report for ${branch.name} generated successfully!`, 'success');
+                    }, 1000);
+                }
+            };
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-box input');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim().toLowerCase();
+                    if (query) {
+                        const filteredBranches = branchList.filter(branch => 
+                            branch.name.toLowerCase().includes(query) || 
+                            branch.manager.toLowerCase().includes(query)
+                        );
+                        
+                        if (filteredBranches.length > 0) {
+                            showNotification(`Found ${filteredBranches.length} branches matching "${query}"`, 'info');
+                            // In real app, would filter the table
+                        } else {
+                            showNotification(`No branches found matching "${query}"`, 'error');
+                        }
+                    }
+                }
+            });
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+            
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+                .bg-purple {
+                    background-color: #8b5cf6 !important;
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+            
+            // Initialize page
+            initCharts();
+            loadBranchTable();
+            
+            // Auto-refresh data every 60 seconds
+            setInterval(() => {
+                // Simulate data update
+                const revenueStat = document.querySelector('.stat-card:nth-child(1) h3');
+                if (revenueStat) {
+                    const currentValue = parseInt(revenueStat.textContent.replace(/[^0-9]/g, ''));
+                    const randomIncrease = Math.floor(Math.random() * 500) + 100;
+                    const newValue = currentValue + randomIncrease;
+                    revenueStat.textContent = '$' + newValue.toLocaleString();
+                }
+                
+                showNotification('Branch data refreshed', 'info');
+            }, 60000);
+        });
+    </script>
+</body>
+</html>

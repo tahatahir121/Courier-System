@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View/Edit Agent | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: var(--primary-dark);
+            transform: translateX(-5px);
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #64748b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 2px solid #fca5a5;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-danger:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        /* Agent Profile Header */
+        .agent-profile-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .agent-profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .agent-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .agent-info-large h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .agent-type-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .agent-type-support {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+        }
+
+        .agent-type-dispatch {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .agent-type-supervisor {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .agent-type-admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .agent-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .agent-contact-info {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            margin-bottom: 2rem;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Sections */
+        .form-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid #cbd5e1;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            color: #475569;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+        }
+
+        /* Activity Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .timeline-date {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-description {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid-small {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card-small {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .stat-card-small h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card-small p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Performance Chart Placeholder */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .modal-close:hover {
+            background: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+
+            .content-wrapper {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary,
+            .btn-secondary,
+            .btn-danger {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .search-box input:focus {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+
+            .tabs-nav {
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="index2.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+                <span class="menu-badge">24</span>
+            </a>
+            <a href="manage-agent.html" class="menu-item active">
+                <i class="fas fa-user-tie"></i>
+                <span>Agents</span>
+                <span class="menu-badge">8</span>
+            </a>
+            <a href="manage-customer.html" class="menu-item ">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+                <span class="menu-badge">125</span>
+            </a>
+            <a href="delivery-sms.html" class="menu-item">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="shipment-report.html" class="menu-item ">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>Administrator</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>Agent Details</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Back Button -->
+            <button class="back-button" onclick="window.location.href='manage-agent.html'">
+                <i class="fas fa-arrow-left"></i> Back to Agents
+            </button>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>View & Update Agent</h2>
+                    <p>Manage agent details, permissions, and track performance</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="toggleEditBtn">
+                        <i class="fas fa-edit"></i> Edit Mode
+                    </button>
+                    <button class="btn-primary" id="saveChangesBtn">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- Agent Profile Header -->
+            <div class="agent-profile-header">
+                <div class="agent-avatar-large" id="agentAvatar">SW</div>
+                <div class="agent-info-large">
+                    <h2 id="agentName">Sarah Wilson</h2>
+                    <div class="agent-meta">
+                        <span class="agent-type-badge agent-type-supervisor" id="agentTypeBadge">Supervisor</span>
+                        <span class="agent-status-badge status-active" id="agentStatusBadge">Active</span>
+                        <span class="contact-item"><i class="fas fa-id-badge"></i> <span
+                                id="agentId">QE-A001</span></span>
+                    </div>
+                    <div class="agent-contact-info">
+                        <span class="contact-item"><i class="fas fa-envelope"></i> <span
+                                id="agentEmail">sarah.w@quantumexpress.com</span></span>
+                        <span class="contact-item"><i class="fas fa-phone"></i> <span id="agentPhone">+1 (555)
+                                234-5678</span></span>
+                        <span class="contact-item"><i class="fas fa-calendar-alt"></i> Joined <span id="joinDate">Jan
+                                15, 2022</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="details">Basic Details</button>
+                    <button class="tab-btn" data-tab="permissions">Permissions</button>
+                    <button class="tab-btn" data-tab="performance">Performance</button>
+                    <button class="tab-btn" data-tab="activity">Activity Log</button>
+                </div>
+
+                <!-- Tab 1: Basic Details -->
+                <div class="tab-content active" id="details-tab">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4>Personal Information</h4>
+                                <p>Update agent's personal and contact details</p>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="fullName" value="Sarah Wilson" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" value="sarah.w@quantumexpress.com"
+                                    readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phone" value="+1 (555) 234-5678" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Agent ID</label>
+                                <input type="text" class="form-control" id="agentIdInput" value="QE-A001" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Department</label>
+                                <select class="form-select" id="department" disabled>
+                                    <option value="operations" selected>Operations</option>
+                                    <option value="support">Customer Support</option>
+                                    <option value="dispatch">Dispatch</option>
+                                    <option value="sales">Sales</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Agent Type</label>
+                                <select class="form-select" id="agentType" disabled>
+                                    <option value="support">Support Agent</option>
+                                    <option value="dispatch">Dispatch Agent</option>
+                                    <option value="supervisor" selected>Supervisor</option>
+                                    <option value="admin">Admin Agent</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="status" disabled>
+                                    <option value="active" selected>Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Join Date</label>
+                                <input type="date" class="form-control" id="joinDateInput" value="2022-01-15" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4>Additional Information</h4>
+                                <p>Agent's additional details and notes</p>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" id="address" value="123 Business Ave, Suite 400"
+                                    readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" value="San Francisco" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State/Province</label>
+                                <input type="text" class="form-control" id="state" value="California" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Postal Code</label>
+                                <input type="text" class="form-control" id="postalCode" value="94105" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-textarea" id="notes"
+                                readonly>Sarah has been with QuantumExpress for 2 years. Excellent performance in operations management. Recently promoted to Supervisor role.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Permissions -->
+                <div class="tab-content" id="permissions-tab">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4>System Permissions</h4>
+                                <p>Manage what this agent can access in the system</p>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permDashboard" checked disabled>
+                                    <label class="form-check-label" for="permDashboard">Dashboard Access</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permCouriers" checked disabled>
+                                    <label class="form-check-label" for="permCouriers">Courier Management</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permAgents" checked disabled>
+                                    <label class="form-check-label" for="permAgents">Agent Management</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permRoutes" checked disabled>
+                                    <label class="form-check-label" for="permRoutes">Route Management</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permAnalytics" checked disabled>
+                                    <label class="form-check-label" for="permAnalytics">Analytics Access</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permReports" checked disabled>
+                                    <label class="form-check-label" for="permReports">Report Generation</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permSettings" disabled>
+                                    <label class="form-check-label" for="permSettings">System Settings</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permUsers" disabled>
+                                    <label class="form-check-label" for="permUsers">User Management</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="permBilling" disabled>
+                                    <label class="form-check-label" for="permBilling">Billing Access</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Custom Permissions</label>
+                            <textarea class="form-textarea" id="customPermissions" readonly>Can approve courier assignments
+Can view financial reports
+Can manage agent schedules</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Performance -->
+                <div class="tab-content" id="performance-tab">
+                    <div class="stats-grid-small">
+                        <div class="stat-card-small">
+                            <h3>2,456</h3>
+                            <p>Tasks Completed</p>
+                        </div>
+                        <div class="stat-card-small">
+                            <h3>98.7%</h3>
+                            <p>Success Rate</p>
+                        </div>
+                        <div class="stat-card-small">
+                            <h3>1.2</h3>
+                            <p>Avg. Rating</p>
+                        </div>
+                        <div class="stat-card-small">
+                            <h3>142</h3>
+                            <p>This Month</p>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4>Performance Metrics</h4>
+                                <p>Agent performance over the last 6 months</p>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            Performance chart would appear here
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4>Performance Notes</h4>
+                                <p>Manager's feedback and performance evaluation</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea class="form-textarea" id="performanceNotes" readonly>Sarah consistently exceeds performance expectations. She has shown excellent leadership skills since her promotion to supervisor. Her team has the highest satisfaction rating among all departments.
+
+Areas for improvement: Could focus more on training junior agents.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Activity Log -->
+                <div class="tab-content" id="activity-tab">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <h4>Recent Activity</h4>
+                                <p>Last 30 days of system activity</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Today, 2:30 PM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Updated courier status</div>
+                                    <div class="timeline-description">Marked package #QE-7842 as delivered</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Yesterday, 4:15 PM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Approved agent permissions</div>
+                                    <div class="timeline-description">Granted route management access to Michael Brown
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Nov 28, 10:00 AM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Created monthly report</div>
+                                    <div class="timeline-description">Generated November operations report</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Nov 25, 3:45 PM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Trained new agent</div>
+                                    <div class="timeline-description">Completed training session with Jennifer Lee</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Nov 20, 9:30 AM</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">System login</div>
+                                    <div class="timeline-description">Logged into QuantumExpress dashboard</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+
+            sidebarToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+
+            mobileMenuToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function (event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function () {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // Tab functionality
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const tabId = this.getAttribute('data-tab');
+
+                    // Update active tab button
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Show active tab content
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // Edit mode toggle
+            let editMode = false;
+            const toggleEditBtn = document.getElementById('toggleEditBtn');
+            const saveChangesBtn = document.getElementById('saveChangesBtn');
+            const editableFields = document.querySelectorAll('.form-control, .form-select, .form-textarea, .form-check-input');
+
+            toggleEditBtn.addEventListener('click', function () {
+                editMode = !editMode;
+
+                if (editMode) {
+                    // Enable all fields
+                    editableFields.forEach(field => {
+                        field.removeAttribute('readonly');
+                        field.removeAttribute('disabled');
+                    });
+
+                    this.innerHTML = '<i class="fas fa-times"></i> Cancel Edit';
+                    this.classList.remove('btn-secondary');
+                    this.classList.add('btn-danger');
+
+                    saveChangesBtn.style.display = 'flex';
+                    showNotification('Edit mode enabled. Make your changes and click Save.', 'info');
+                } else {
+                    // Disable all fields and reset values
+                    editableFields.forEach(field => {
+                        field.setAttribute('readonly', 'true');
+                        field.setAttribute('disabled', 'true');
+                    });
+
+                    this.innerHTML = '<i class="fas fa-edit"></i> Edit Mode';
+                    this.classList.remove('btn-danger');
+                    this.classList.add('btn-secondary');
+
+                    saveChangesBtn.style.display = 'none';
+                    showNotification('Edit mode cancelled.', 'info');
+                }
+            });
+
+            // Save changes
+            saveChangesBtn.addEventListener('click', function () {
+                // In a real app, you would send this data to a server
+                const updatedData = {
+                    name: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    department: document.getElementById('department').value,
+                    agentType: document.getElementById('agentType').value,
+                    status: document.getElementById('status').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    postalCode: document.getElementById('postalCode').value,
+                    notes: document.getElementById('notes').value,
+                    performanceNotes: document.getElementById('performanceNotes').value
+                };
+
+                // Update UI with new values
+                document.getElementById('agentName').textContent = updatedData.name;
+                document.getElementById('agentEmail').textContent = updatedData.email;
+                document.getElementById('agentPhone').textContent = updatedData.phone;
+
+                // Update avatar initials
+                const initials = updatedData.name.split(' ').map(n => n[0]).join('');
+                document.getElementById('agentAvatar').textContent = initials;
+
+                // Update badges
+                const typeBadge = document.getElementById('agentTypeBadge');
+                const statusBadge = document.getElementById('agentStatusBadge');
+
+                typeBadge.textContent = updatedData.agentType === 'support' ? 'Support Agent' :
+                    updatedData.agentType === 'dispatch' ? 'Dispatch Agent' :
+                        updatedData.agentType === 'supervisor' ? 'Supervisor' : 'Admin Agent';
+
+                typeBadge.className = 'agent-type-badge ' +
+                    (updatedData.agentType === 'support' ? 'agent-type-support' :
+                        updatedData.agentType === 'dispatch' ? 'agent-type-dispatch' :
+                            updatedData.agentType === 'supervisor' ? 'agent-type-supervisor' : 'agent-type-admin');
+
+                statusBadge.textContent = updatedData.status.charAt(0).toUpperCase() + updatedData.status.slice(1);
+                statusBadge.className = 'agent-status-badge status-' + updatedData.status;
+
+                // Exit edit mode
+                editMode = false;
+                toggleEditBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Mode';
+                toggleEditBtn.classList.remove('btn-danger');
+                toggleEditBtn.classList.add('btn-secondary');
+
+                editableFields.forEach(field => {
+                    field.setAttribute('readonly', 'true');
+                    field.setAttribute('disabled', 'true');
+                });
+
+                saveChangesBtn.style.display = 'none';
+
+                showNotification('Agent details updated successfully!', 'success');
+            });
+
+
+
+
+
+            // Close modal when clicking outside
+            deleteModal.addEventListener('click', function (event) {
+                if (event.target === deleteModal) {
+                    deleteModal.classList.remove('active');
+                }
+            });
+
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+
+            // Initialize with edit mode disabled
+            editableFields.forEach(field => {
+                field.setAttribute('readonly', 'true');
+                field.setAttribute('disabled', 'true');
+            });
+            saveChangesBtn.style.display = 'none';
+        });
+
+        // Add delete button to action buttons in header
+        document.getElementById('deleteAgentBtn').addEventListener('click', function () {
+            window.showDeleteModal();
+        });
+    </script>
+</body>
+
+</html>

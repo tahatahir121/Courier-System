@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Shipping Label | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+
+        
+        /* Print Header */
+        .print-header {
+            background: var(--gradient);
+            color: white;
+            padding: 8rem 2rem;
+            text-align: center;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 2rem;
+            
+        }
+        
+        .print-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .print-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Print Container */
+        .print-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Print Options */
+        .print-options-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .options-title {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .option-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .option-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.15);
+        }
+        
+        .option-card.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .option-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            background: var(--gradient);
+        }
+        
+        .option-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .option-description {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        /* Print Preview */
+        .print-preview-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .preview-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .preview-area {
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+            min-height: 500px;
+            background: white;
+            position: relative;
+        }
+        
+        /* Shipping Label Design */
+        .shipping-label {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            background: white;
+        }
+        
+        .label-header {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .label-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+        }
+        
+        .label-tracking {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .label-content {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .label-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        
+        .section-content {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+        
+        .barcode-container {
+            grid-column: span 2;
+            text-align: center;
+            padding: 1rem;
+            border-top: 2px dashed #e2e8f0;
+            margin-top: 1rem;
+        }
+        
+        .barcode {
+            font-family: 'Libre Barcode 128', cursive;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .barcode-text {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .label-instructions {
+            grid-column: span 2;
+            font-size: 0.9rem;
+            color: #64748b;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .instructions-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Print Actions */
+        .print-actions {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .actions-title {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn.primary {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .action-btn.secondary {
+            background: #f1f5f9;
+            color: var(--dark);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        /* Print Settings */
+        .print-settings {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #f1f5f9;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .setting-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .setting-group select, .setting-group input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Footer */
+        .main-footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .footer-description {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links h4 {
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            
+            .print-header {
+                padding: 2rem 1rem;
+            }
+            
+            .print-title {
+                font-size: 2rem;
+            }
+            
+            .print-container {
+                padding: 0 1rem;
+            }
+            
+            .print-options-card,
+            .print-preview-card,
+            .print-actions {
+                padding: 1.5rem;
+            }
+            
+            .label-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media print {
+            .main-header,
+            .print-header,
+            .print-options-card,
+            .print-actions,
+            .main-footer {
+                display: none !important;
+            }
+            
+            .print-preview-card {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .preview-area {
+                border: none;
+                padding: 0;
+                min-height: auto;
+            }
+            
+            .shipping-label {
+                max-width: 100%;
+                border: 1px solid #000;
+                break-inside: avoid;
+            }
+        }
+
+.navbar {
+    background: transparent;
+    backdrop-filter: none;
+    border-bottom: none;
+    padding: 1.2rem 0;
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 0.8rem 0;
+}
+
+/* Navbar text on transparent background */
+.navbar:not(.scrolled) .nav-link,
+.navbar:not(.scrolled) .navbar-brand {
+    color: white !important;
+}
+
+/* Brand gradient still visible */
+.navbar:not(.scrolled) .navbar-brand {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Scrolled state text */
+.navbar.scrolled .nav-link {
+    color: var(--dark) !important;
+}
+
+
+        .navbar-brand {
+            font-weight: 900;
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--dark) !important;
+            margin: 0 0.5rem;
+            position: relative;
+            padding: 0.5rem 0 !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--gradient);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 50px;
+            padding: 0.6rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .navbar:not(.scrolled) .btn-login {
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+}
+/* Login button - after scroll */
+.navbar.scrolled .btn-login {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.navbar .btn-login:hover {
+    background: var(--primary);
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+
+
+
+        .btn-register {
+            background: var(--gradient);
+            border: none;
+            color: white;
+            border-radius: 50px;
+            padding: 0.6rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+        }
+
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index3.html">
+                <i class="fas fa-bolt"></i> QuantumExpress
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link " href="index3.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index3.html">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index3.html">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index3.html">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="track-consignment.html">Track Order</a>
+                    </li>
+                </ul>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-login">Login</a>
+                    <a href="register.html" class="btn btn-register">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Print Header -->
+    <section class="print-header">
+        <div class="container">
+            <h1 class="print-title">Print Shipping Label</h1>
+            <p class="print-subtitle">Generate and print professional shipping labels for your packages</p>
+        </div>
+    </section>
+
+    <!-- Print Container -->
+    <div class="print-container">
+        <!-- Print Options -->
+        <div class="print-options-card">
+            <h3 class="options-title">Select Label Type</h3>
+            
+            <div class="options-grid">
+                <div class="option-card selected" data-type="standard" id="standardLabel">
+                    <div class="option-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="option-title">Standard Label</div>
+                    <div class="option-description">
+                        Standard 4×6 inch label with barcode and tracking information
+                    </div>
+                </div>
+                
+                <div class="option-card" data-type="thermal" id="thermalLabel">
+                    <div class="option-icon">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <div class="option-title">Thermal Label</div>
+                    <div class="option-description">
+                        Optimized for thermal printers, 4×6 inch with high contrast
+                    </div>
+                </div>
+                
+                <div class="option-card" data-type="international" id="internationalLabel">
+                    <div class="option-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="option-title">International Label</div>
+                    <div class="option-description">
+                        Includes customs declaration and international shipping info
+                    </div>
+                </div>
+                
+                <div class="option-card" data-type="return" id="returnLabel">
+                    <div class="option-icon">
+                        <i class="fas fa-undo"></i>
+                    </div>
+                    <div class="option-title">Return Label</div>
+                    <div class="option-description">
+                        Prepaid return label for customer returns
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Print Preview -->
+        <div class="print-preview-card">
+            <div class="preview-title">
+                <h3>Label Preview</h3>
+                <div class="text-muted">
+                    Size: <span id="labelSize">4×6 inches</span>
+                </div>
+            </div>
+            
+            <div class="preview-area">
+                <!-- Shipping Label -->
+                <div class="shipping-label" id="shippingLabel">
+                    <div class="label-header">
+                        <div class="label-logo">QuantumExpress</div>
+                        <div class="label-tracking" id="previewTrackingNumber">QE-2023-789456</div>
+                    </div>
+                    
+                    <div class="label-content">
+                        <div class="label-section">
+                            <div class="section-title">From (Sender)</div>
+                            <div class="section-content" id="senderAddress">
+                                John Smith<br>
+                                123 Main Street<br>
+                                New York, NY 10001<br>
+                                United States<br>
+                                Phone: (555) 123-4567
+                            </div>
+                        </div>
+                        
+                        <div class="label-section">
+                            <div class="section-title">To (Receiver)</div>
+                            <div class="section-content" id="receiverAddress">
+                                Sarah Johnson<br>
+                                456 Oak Avenue<br>
+                                Los Angeles, CA 90001<br>
+                                United States<br>
+                                Phone: (555) 987-6543
+                            </div>
+                        </div>
+                        
+                        <div class="label-section">
+                            <div class="section-title">Shipment Details</div>
+                            <div class="section-content" id="shipmentDetails">
+                                Weight: 2.5 kg<br>
+                                Service: Express Delivery<br>
+                                Reference: ORDER-789<br>
+                                Date: Dec 12, 2023
+                            </div>
+                        </div>
+                        
+                        <div class="label-section">
+                            <div class="section-title">Special Instructions</div>
+                            <div class="section-content" id="instructions">
+                                Fragile - Handle with care<br>
+                                Signature required
+                            </div>
+                        </div>
+                        
+                        <div class="barcode-container">
+                            <div class="barcode" id="barcode">QE-2023-789456</div>
+                            <div class="barcode-text">Scan for tracking information</div>
+                        </div>
+                        
+                        <div class="label-instructions">
+                            <div class="instructions-title">Shipping Instructions:</div>
+                            <div>1. Attach this label securely to your package</div>
+                            <div>2. Remove any old shipping labels</div>
+                            <div>3. Keep a copy for your records</div>
+                            <div>4. Drop off at any QuantumExpress location</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Print Actions -->
+        <div class="print-actions">
+            <h3 class="actions-title">Print & Download</h3>
+            
+            <div class="action-buttons">
+                <button class="action-btn primary" id="printBtn">
+                    <i class="fas fa-print"></i> Print Label
+                </button>
+                <button class="action-btn secondary" id="downloadPdfBtn">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </button>
+                <button class="action-btn secondary" id="downloadPngBtn">
+                    <i class="fas fa-image"></i> Download Image
+                </button>
+                <button class="action-btn secondary" id="emailLabelBtn">
+                    <i class="fas fa-envelope"></i> Email Label
+                </button>
+                <button class="action-btn secondary" id="newLabelBtn">
+                    <i class="fas fa-plus"></i> New Label
+                </button>
+            </div>
+            
+            <!-- Print Settings -->
+            <div class="print-settings">
+                <h4>Print Settings</h4>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="paperSize"><i class="fas fa-file me-1"></i> Paper Size</label>
+                        <select id="paperSize" class="form-select">
+                            <option value="4x6">4×6 inches</option>
+                            <option value="letter">Letter (8.5×11 inches)</option>
+                            <option value="a4">A4 (210×297 mm)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="copies"><i class="fas fa-copy me-1"></i> Number of Copies</label>
+                        <input type="number" id="copies" class="form-control" value="1" min="1" max="10">
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="orientation"><i class="fas fa-arrows-alt-h me-1"></i> Orientation</label>
+                        <select id="orientation" class="form-select">
+                            <option value="portrait">Portrait</option>
+                            <option value="landscape">Landscape</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label for="labelCount"><i class="fas fa-tags me-1"></i> Labels per Page</label>
+                        <select id="labelCount" class="form-select">
+                            <option value="1">1 label</option>
+                            <option value="2">2 labels</option>
+                            <option value="4">4 labels</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">QuantumExpress</div>
+                    <p class="footer-description">
+                        Delivering excellence with speed and reliability. Print professional shipping labels with our easy-to-use system.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="track-consignment.html">Track Shipment</a></li>
+                        <li><a href="view-status.html">View Status</a></li>
+                        <li><a href="print-status.html">Print Label</a></li>
+                        <li><a href="../login.html">Agent Login</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Express Delivery</a></li>
+                        <li><a href="#">International Shipping</a></li>
+                        <li><a href="#">Same Day Delivery</a></li>
+                        <li><a href="#">Warehouse Services</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-phone me-2"></i> +1 (800) 123-4567</li>
+                        <li><i class="fas fa-envelope me-2"></i> support@quantumexpress.com</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Delivery St, City, Country</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 QuantumExpress. All rights reserved. | <a href="#" class="text-white">Privacy Policy</a> | <a href="#" class="text-white">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get tracking number from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const trackingNumber = urlParams.get('tracking') || 'QE-2023-789456';
+            
+            // Update preview with tracking number
+            document.getElementById('previewTrackingNumber').textContent = trackingNumber;
+            document.getElementById('barcode').textContent = trackingNumber;
+            
+            // Label type selection
+            const labelOptions = document.querySelectorAll('.option-card');
+            labelOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    labelOptions.forEach(opt => opt.classList.remove('selected'));
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Update label preview based on selected type
+                    updateLabelPreview(this.dataset.type);
+                });
+            });
+            
+            // Function to update label preview
+            function updateLabelPreview(labelType) {
+                const labelSize = document.getElementById('labelSize');
+                const shipmentDetails = document.getElementById('shipmentDetails');
+                const instructions = document.getElementById('instructions');
+                
+                switch(labelType) {
+                    case 'standard':
+                        labelSize.textContent = '4×6 inches';
+                        shipmentDetails.innerHTML = `
+                            Weight: 2.5 kg<br>
+                            Service: Express Delivery<br>
+                            Reference: ORDER-789<br>
+                            Date: Dec 12, 2023
+                        `;
+                        instructions.textContent = 'Fragile - Handle with care\nSignature required';
+                        break;
+                        
+                    case 'thermal':
+                        labelSize.textContent = '4×6 inches (Thermal)';
+                        shipmentDetails.innerHTML = `
+                            Weight: 2.5 kg<br>
+                            Service: Express Delivery<br>
+                            Reference: ORDER-789<br>
+                            Priority: HIGH
+                        `;
+                        instructions.textContent = 'KEEP DRY\nDO NOT BEND';
+                        break;
+                        
+                    case 'international':
+                        labelSize.textContent = '4×6 inches (International)';
+                        shipmentDetails.innerHTML = `
+                            Weight: 2.5 kg<br>
+                            Service: International<br>
+                            Customs: CLEARED<br>
+                            HS Code: 1234.56.78
+                        `;
+                        instructions.textContent = 'COMMERCIAL INVOICE ENCLOSED\nCUSTOMS DECLARATION REQUIRED';
+                        break;
+                        
+                    case 'return':
+                        labelSize.textContent = '4×6 inches (Return)';
+                        shipmentDetails.innerHTML = `
+                            Weight: 2.5 kg<br>
+                            Service: Return Service<br>
+                            RMA: RMA-2023-456<br>
+                            Return to: Warehouse #5
+                        `;
+                        instructions.textContent = 'RETURN LABEL\nCUSTOMER RETURN';
+                        break;
+                }
+            }
+            
+            // Setup action buttons
+            setupActionButtons(trackingNumber);
+            
+            // Function to setup action buttons
+            function setupActionButtons(trackingNumber) {
+                // Print button
+                document.getElementById('printBtn').addEventListener('click', function() {
+                    const copies = parseInt(document.getElementById('copies').value);
+                    
+                    if (copies > 1) {
+                        alert(`Printing ${copies} copies of the shipping label...`);
+                    } else {
+                        alert('Opening print dialog...');
+                    }
+                    
+                    // Trigger browser print
+                    setTimeout(() => {
+                        window.print();
+                    }, 500);
+                });
+                
+                // Download PDF button
+                document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+                    alert(`Downloading PDF label for ${trackingNumber}...`);
+                    // In a real app, this would trigger a PDF download
+                    simulateDownload('shipping-label.pdf');
+                });
+                
+                // Download PNG button
+                document.getElementById('downloadPngBtn').addEventListener('click', function() {
+                    alert(`Downloading PNG label for ${trackingNumber}...`);
+                    // In a real app, this would trigger an image download
+                    simulateDownload('shipping-label.png');
+                });
+                
+                // Email label button
+                document.getElementById('emailLabelBtn').addEventListener('click', function() {
+                    const email = prompt('Enter email address to send the label to:');
+                    if (email) {
+                        alert(`Shipping label sent to ${email}`);
+                    }
+                });
+                
+                // New label button
+                document.getElementById('newLabelBtn').addEventListener('click', function() {
+                    const newTracking = prompt('Enter new tracking number:');
+                    if (newTracking) {
+                        window.location.href = `print-status.html?tracking=${encodeURIComponent(newTracking)}`;
+                    }
+                });
+                
+                // Paper size change
+                document.getElementById('paperSize').addEventListener('change', function() {
+                    const size = this.value;
+                    const labelSize = document.getElementById('labelSize');
+                    
+                    switch(size) {
+                        case '4x6':
+                            labelSize.textContent = '4×6 inches';
+                            break;
+                        case 'letter':
+                            labelSize.textContent = 'Letter (8.5×11 inches)';
+                            break;
+                        case 'a4':
+                            labelSize.textContent = 'A4 (210×297 mm)';
+                            break;
+                    }
+                });
+            }
+            
+            // Simulate download function
+            function simulateDownload(filename) {
+                // Create a temporary link for download simulation
+                const link = document.createElement('a');
+                link.href = '#';
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            // Load shipment data
+            loadShipmentData(trackingNumber);
+            
+            // Function to load shipment data
+            function loadShipmentData(trackingNumber) {
+                // Mock shipment data
+                const shipmentData = {
+                    'QE-2023-789456': {
+                        sender: `John Smith<br>123 Main Street<br>New York, NY 10001<br>United States<br>Phone: (555) 123-4567`,
+                        receiver: `Sarah Johnson<br>456 Oak Avenue<br>Los Angeles, CA 90001<br>United States<br>Phone: (555) 987-6543`,
+                        weight: '2.5 kg',
+                        service: 'Express Delivery',
+                        date: 'Dec 12, 2023'
+                    },
+                    'QE-2023-123456': {
+                        sender: `Tech Corp<br>789 Tech Street<br>San Francisco, CA 94107<br>United States<br>Phone: (555) 555-1234`,
+                        receiver: `David Wilson<br>321 Pine Street<br>Chicago, IL 60601<br>United States<br>Phone: (555) 555-5678`,
+                        weight: '5.2 kg',
+                        service: 'Standard Delivery',
+                        date: 'Dec 10, 2023'
+                    },
+                    'QE-2023-654321': {
+                        sender: `Emily Brown<br>987 Beach Blvd<br>Miami, FL 33101<br>United States<br>Phone: (555) 333-9999`,
+                        receiver: `Robert Taylor<br>654 Mountain View<br>Seattle, WA 98101<br>United States<br>Phone: (555) 444-8888`,
+                        weight: '1.8 kg',
+                        service: 'Economy Delivery',
+                        date: 'Dec 12, 2023'
+                    }
+                };
+                
+                const data = shipmentData[trackingNumber] || shipmentData['QE-2023-789456'];
+                
+                // Update label with shipment data
+                document.getElementById('senderAddress').innerHTML = data.sender;
+                document.getElementById('receiverAddress').innerHTML = data.receiver;
+                document.getElementById('shipmentDetails').innerHTML = `
+                    Weight: ${data.weight}<br>
+                    Service: ${data.service}<br>
+                    Reference: ${trackingNumber}<br>
+                    Date: ${data.date}
+                `;
+            }
+            
+            // Auto-update barcode
+            document.getElementById('paperSize').addEventListener('change', updateBarcode);
+            document.getElementById('orientation').addEventListener('change', updateBarcode);
+            
+            function updateBarcode() {
+                // In a real app, this would generate a proper barcode
+                console.log('Barcode updated based on settings');
+            }
+        }
+    );
+    window.addEventListener('scroll', function () {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    </script>
+</body>
+</html>

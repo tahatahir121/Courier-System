@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Reports | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+        
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+        
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+        
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+        
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+        
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+        
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+        
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-title p {
+            color: #64748b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Report Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-info p {
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .icon-delivered {
+            background: #10b981;
+        }
+        
+        .icon-pending {
+            background: #f59e0b;
+        }
+        
+        .icon-transit {
+            background: #6366f1;
+        }
+        
+        .icon-revenue {
+            background: #8b5cf6;
+        }
+        
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .filter-group {
+            margin-bottom: 0;
+        }
+        
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .filter-select {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        /* Report Charts */
+        .charts-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title h4 {
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-title p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-style: italic;
+        }
+        
+        /* Report Table */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .report-table th {
+            text-align: left;
+            padding: 1rem;
+            color: #64748b;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .report-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .shipment-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-transit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Export Options */
+        .export-section {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .export-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .export-btn {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .export-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .search-box input:focus {
+                width: 220px;
+            }
+            
+            .report-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .search-box {
+                display: none;
+            }
+            
+            .export-options {
+                flex-direction: column;
+            }
+            
+            .export-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="index2.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+            </a>
+            <a href="manage-agent.html" class="menu-item">
+                <i class="fas fa-user-tie"></i>
+                <span>Agents</span>
+            </a>
+            <a href="manage-customer.html" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="delivery-sms.html" class="menu-item">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="shipment-report.html" class="menu-item active">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>Administrator</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>Shipment Reports</h1>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search reports..." id="searchInput">
+                </div>
+                
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Shipment Analytics</h2>
+                    <p>Comprehensive shipment reports and analytics</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="window.location.href='date-wise.html'">
+                        <i class="fas fa-calendar-alt"></i> Date Wise
+                    </button>
+                    <button class="btn-primary" id="generateReportBtn">
+                        <i class="fas fa-file-export"></i> Generate Report
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Report Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>8,942</h3>
+                        <p>Total Shipments</p>
+                    </div>
+                    <div class="stat-icon icon-delivered">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>1,245</h3>
+                        <p>Pending Delivery</p>
+                    </div>
+                    <div class="stat-icon icon-pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>756</h3>
+                        <p>In Transit</p>
+                    </div>
+                    <div class="stat-icon icon-transit">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>$245,820</h3>
+                        <p>Total Revenue</p>
+                    </div>
+                    <div class="stat-icon icon-revenue">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <div class="filters-header">
+                    <h4>Filter Report Data</h4>
+                    <button class="btn-secondary" id="clearFiltersBtn">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Date Range</label>
+                        <select class="filter-select" id="dateRange">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="week" selected>This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Shipment Status</label>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="pending">Pending</option>
+                            <option value="transit">In Transit</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Shipment Type</label>
+                        <select class="filter-select" id="typeFilter">
+                            <option value="all">All Types</option>
+                            <option value="standard">Standard</option>
+                            <option value="express">Express</option>
+                            <option value="priority">Priority</option>
+                            <option value="international">International</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Sort By</label>
+                        <select class="filter-select" id="sortFilter">
+                            <option value="date">Date (Recent First)</option>
+                            <option value="date_old">Date (Oldest First)</option>
+                            <option value="value">Shipment Value</option>
+                            <option value="weight">Weight</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Report Charts -->
+            <div class="charts-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Shipment Analytics</h4>
+                        <p>Visual representation of shipment data</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="refreshChartsBtn">
+                            <i class="fas fa-redo"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        Shipment Volume Chart (Would display here)
+                        <br><small class="text-muted">Monthly shipment trends</small>
+                    </div>
+                    <div class="chart-container">
+                        Status Distribution Chart (Would display here)
+                        <br><small class="text-muted">Delivery success rate</small>
+                    </div>
+                    <div class="chart-container">
+                        Revenue Analysis (Would display here)
+                        <br><small class="text-muted">Monthly revenue growth</small>
+                    </div>
+                    <div class="chart-container">
+                        Courier Performance (Would display here)
+                        <br><small class="text-muted">Top performing couriers</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detailed Report Table -->
+            <div class="charts-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Detailed Shipment Report</h4>
+                        <p>Complete list of shipments with filters applied</p>
+                    </div>
+                    <div class="text-muted">
+                        Showing <span id="reportCount">50</span> shipments
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Shipment ID</th>
+                                <th>Customer</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Value</th>
+                                <th>Weight</th>
+                                <th>Created</th>
+                                <th>Delivery Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTable">
+                            <!-- Report data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Export Options -->
+            <div class="export-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h4>Export Report</h4>
+                        <p>Export shipment data in various formats</p>
+                    </div>
+                </div>
+                
+                <div class="export-options">
+                    <button class="export-btn" id="exportPdfBtn">
+                        <i class="fas fa-file-pdf"></i> Export as PDF
+                    </button>
+                    <button class="export-btn" id="exportExcelBtn">
+                        <i class="fas fa-file-excel"></i> Export as Excel
+                    </button>
+                    <button class="export-btn" id="exportCsvBtn">
+                        <i class="fas fa-file-csv"></i> Export as CSV
+                    </button>
+                    <button class="export-btn" id="exportPrintBtn">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Report Summary -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted">
+                    Report generated: <span id="reportTimestamp">Today, 10:30 AM</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" id="saveReportBtn">
+                        <i class="fas fa-save"></i> Save Report
+                    </button>
+                    <button class="btn-primary" onclick="window.location.href='city-wise.html'">
+                        <i class="fas fa-map-marker-alt"></i> City Wise Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+            
+            // Sample shipment data
+            const shipmentData = [
+                {
+                    id: "QE-7845",
+                    customer: "John Smith",
+                    type: "Express",
+                    status: "delivered",
+                    value: "$245",
+                    weight: "2.5 kg",
+                    created: "2023-11-15",
+                    deliveryDate: "2023-11-17"
+                },
+                {
+                    id: "QE-7846",
+                    customer: "Sarah Johnson",
+                    type: "Standard",
+                    status: "pending",
+                    value: "$120",
+                    weight: "1.8 kg",
+                    created: "2023-11-16",
+                    deliveryDate: "2023-11-20"
+                },
+                {
+                    id: "QE-7847",
+                    customer: "Mike Wilson",
+                    type: "Priority",
+                    status: "transit",
+                    value: "$350",
+                    weight: "5.2 kg",
+                    created: "2023-11-14",
+                    deliveryDate: "2023-11-18"
+                },
+                {
+                    id: "QE-7848",
+                    customer: "Emily Davis",
+                    type: "International",
+                    status: "delivered",
+                    value: "$890",
+                    weight: "3.8 kg",
+                    created: "2023-11-10",
+                    deliveryDate: "2023-11-15"
+                },
+                {
+                    id: "QE-7849",
+                    customer: "Robert Brown",
+                    type: "Standard",
+                    status: "failed",
+                    value: "$95",
+                    weight: "1.2 kg",
+                    created: "2023-11-12",
+                    deliveryDate: "2023-11-14"
+                },
+                {
+                    id: "QE-7850",
+                    customer: "Lisa Miller",
+                    type: "Express",
+                    status: "delivered",
+                    value: "$210",
+                    weight: "2.1 kg",
+                    created: "2023-11-13",
+                    deliveryDate: "2023-11-15"
+                },
+                {
+                    id: "QE-7851",
+                    customer: "David Wilson",
+                    type: "Priority",
+                    status: "transit",
+                    value: "$450",
+                    weight: "4.5 kg",
+                    created: "2023-11-15",
+                    deliveryDate: "2023-11-19"
+                },
+                {
+                    id: "QE-7852",
+                    customer: "Jennifer Lee",
+                    type: "Standard",
+                    status: "pending",
+                    value: "$180",
+                    weight: "2.8 kg",
+                    created: "2023-11-17",
+                    deliveryDate: "2023-11-21"
+                },
+                {
+                    id: "QE-7853",
+                    customer: "Thomas Clark",
+                    type: "International",
+                    status: "delivered",
+                    value: "$720",
+                    weight: "3.5 kg",
+                    created: "2023-11-11",
+                    deliveryDate: "2023-11-16"
+                },
+                {
+                    id: "QE-7854",
+                    customer: "Maria Garcia",
+                    type: "Express",
+                    status: "transit",
+                    value: "$290",
+                    weight: "2.3 kg",
+                    created: "2023-11-14",
+                    deliveryDate: "2023-11-17"
+                }
+            ];
+            
+            // Load report table
+            function loadReportTable() {
+                const reportTable = document.getElementById('reportTable');
+                reportTable.innerHTML = '';
+                
+                shipmentData.forEach(shipment => {
+                    const statusClass = `status-${shipment.status}`;
+                    const statusText = shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${shipment.id}</strong></td>
+                        <td>${shipment.customer}</td>
+                        <td>${shipment.type}</td>
+                        <td><span class="shipment-status ${statusClass}">${statusText}</span></td>
+                        <td>${shipment.value}</td>
+                        <td>${shipment.weight}</td>
+                        <td>${shipment.created}</td>
+                        <td>${shipment.deliveryDate}</td>
+                    `;
+                    
+                    reportTable.appendChild(row);
+                });
+                
+                document.getElementById('reportCount').textContent = shipmentData.length;
+            }
+            
+            // Filter functionality
+            const dateRange = document.getElementById('dateRange');
+            const statusFilter = document.getElementById('statusFilter');
+            const typeFilter = document.getElementById('typeFilter');
+            const sortFilter = document.getElementById('sortFilter');
+            const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+            const searchInput = document.getElementById('searchInput');
+            
+            function applyFilters() {
+                let filteredData = [...shipmentData];
+                
+                // Apply status filter
+                if (statusFilter.value !== 'all') {
+                    filteredData = filteredData.filter(shipment => shipment.status === statusFilter.value);
+                }
+                
+                // Apply type filter
+                if (typeFilter.value !== 'all') {
+                    filteredData = filteredData.filter(shipment => shipment.type.toLowerCase() === typeFilter.value);
+                }
+                
+                // Apply search
+                if (searchInput.value) {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    filteredData = filteredData.filter(shipment => 
+                        shipment.id.toLowerCase().includes(searchTerm) ||
+                        shipment.customer.toLowerCase().includes(searchTerm) ||
+                        shipment.type.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Apply sorting
+                filteredData.sort((a, b) => {
+                    switch (sortFilter.value) {
+                        case 'date':
+                            return new Date(b.created) - new Date(a.created);
+                        case 'date_old':
+                            return new Date(a.created) - new Date(b.created);
+                        case 'value':
+                            return parseFloat(b.value.replace('$', '')) - parseFloat(a.value.replace('$', ''));
+                        case 'weight':
+                            return parseFloat(b.weight) - parseFloat(a.weight);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                // Update table
+                updateTableWithFilteredData(filteredData);
+            }
+            
+            function updateTableWithFilteredData(data) {
+                const reportTable = document.getElementById('reportTable');
+                reportTable.innerHTML = '';
+                
+                data.forEach(shipment => {
+                    const statusClass = `status-${shipment.status}`;
+                    const statusText = shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${shipment.id}</strong></td>
+                        <td>${shipment.customer}</td>
+                        <td>${shipment.type}</td>
+                        <td><span class="shipment-status ${statusClass}">${statusText}</span></td>
+                        <td>${shipment.value}</td>
+                        <td>${shipment.weight}</td>
+                        <td>${shipment.created}</td>
+                        <td>${shipment.deliveryDate}</td>
+                    `;
+                    
+                    reportTable.appendChild(row);
+                });
+                
+                document.getElementById('reportCount').textContent = data.length;
+            }
+            
+            // Event listeners for filters
+            dateRange.addEventListener('change', applyFilters);
+            statusFilter.addEventListener('change', applyFilters);
+            typeFilter.addEventListener('change', applyFilters);
+            sortFilter.addEventListener('change', applyFilters);
+            
+            // Clear filters
+            clearFiltersBtn.addEventListener('click', function() {
+                dateRange.value = 'week';
+                statusFilter.value = 'all';
+                typeFilter.value = 'all';
+                sortFilter.value = 'date';
+                searchInput.value = '';
+                applyFilters();
+                showNotification('All filters cleared', 'success');
+            });
+            
+            // Search functionality
+            searchInput.addEventListener('input', applyFilters);
+            
+            // Generate report
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            generateReportBtn.addEventListener('click', function() {
+                const reportTimestamp = new Date().toLocaleString('en-US', {
+                    weekday: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                document.getElementById('reportTimestamp').textContent = reportTimestamp;
+                showNotification('Report generated successfully', 'success');
+            });
+            
+            // Refresh charts
+            const refreshChartsBtn = document.getElementById('refreshChartsBtn');
+            refreshChartsBtn.addEventListener('click', function() {
+                showNotification('Charts refreshed with latest data', 'success');
+            });
+            
+            // Export buttons
+            document.getElementById('exportPdfBtn').addEventListener('click', function() {
+                showNotification('PDF export initiated', 'info');
+            });
+            
+            document.getElementById('exportExcelBtn').addEventListener('click', function() {
+                showNotification('Excel export initiated', 'info');
+            });
+            
+            document.getElementById('exportCsvBtn').addEventListener('click', function() {
+                showNotification('CSV export initiated', 'info');
+            });
+            
+            document.getElementById('exportPrintBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Save report
+            const saveReportBtn = document.getElementById('saveReportBtn');
+            saveReportBtn.addEventListener('click', function() {
+                showNotification('Report saved to dashboard', 'success');
+            });
+            
+            // Notification function
+            function showNotification(message, type = 'info') {
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+                
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+            
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+            
+            // Initialize
+            loadReportTable();
+            applyFilters();
+        });
+    </script>
+</body>
+</html>

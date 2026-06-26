@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | QuantumExpress</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #8b5cf6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 30px 60px rgba(0, 0, 0, 0.12);
+            --sidebar-width: 280px;
+            --sidebar-collapsed: 80px;
+            --header-height: 76px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .sidebar-logo {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 900;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar.collapsed .sidebar-logo span {
+            display: none;
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: #64748b;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem 1rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .menu-item.active {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        .menu-item span {
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+
+        .sidebar.collapsed .menu-item span {
+            display: none;
+        }
+
+        .menu-badge {
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .sidebar.collapsed .menu-badge {
+            display: none;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar.collapsed .user-info .user-details {
+            display: none;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-details h6 {
+            margin-bottom: 0.2rem;
+        }
+
+        .user-details p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            background: #f8fafc;
+        }
+
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            width: 250px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: white;
+            width: 300px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            position: relative;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .notification-btn:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Content Area */
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-left: 5px solid;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card.pending {
+            border-color: #f59e0b;
+        }
+
+        .stat-card.in-transit {
+            border-color: var(--primary);
+        }
+
+        .stat-card.delivered {
+            border-color: var(--secondary);
+        }
+
+        .stat-card.failed {
+            border-color: #ef4444;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-info p {
+            color: #64748b;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .stat-card.pending .stat-icon {
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        .stat-card.in-transit .stat-icon {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        }
+
+        .stat-card.delivered .stat-icon {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        }
+
+        .stat-card.failed .stat-icon {
+            background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-header h3 {
+            margin-bottom: 0;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chart-btn.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .recent-orders {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h3 {
+            margin-bottom: 0;
+        }
+
+        .view-all-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            gap: 0.8rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 1rem;
+            color: #64748b;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .orders-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-in-transit {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+        }
+
+        .status-delivered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+        }
+
+        .action-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .drivers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .driver-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .driver-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .driver-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .driver-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .driver-info h5 {
+            margin-bottom: 0.3rem;
+        }
+
+        .driver-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .driver-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .driver-stat {
+            text-align: center;
+        }
+
+        .driver-stat h4 {
+            margin-bottom: 0.2rem;
+        }
+
+        .driver-stat p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .driver-progress {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        .driver-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .driver-btn {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.6rem;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .driver-btn:hover {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-header {
+                padding: 0 1rem;
+            }
+
+            .content-wrapper {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search-box input {
+                width: 180px;
+            }
+
+            .search-box input:focus {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="index.html" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>QuantumExpress</span>
+                    </div>
+                </a>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courier.html" class="menu-item">
+                <i class="fas fa-truck"></i>
+                <span>Couriers</span>
+                <span class="menu-badge">24</span>
+            </a>
+            <a href="manage-agent.html" class="menu-item">
+                <i class="fas fa-user-tie"></i>
+                <span>Agents</span>
+                <span class="menu-badge">8</span>
+            </a>
+            <a href="manage-customer.html" class="menu-item ">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+                <span class="menu-badge">125</span>
+            </a>
+            <a href="delivery-sms.html" class="menu-item">
+                <i class="fas fa-sms"></i>
+                <span>SMS</span>
+            </a>
+            <a href="shipment-report.html" class="menu-item ">
+                <i class="fas fa-chart-line"></i>
+                <span>Reports</span>
+            </a>
+
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h6>John Doe</h6>
+                    <p>Admin</p>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-title">
+                <h1>Dashboard Overview</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search packages, drivers...">
+                </div>
+
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+
+                <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card pending">
+                    <div class="stat-info">
+                        <h3>342</h3>
+                        <p>Pending Shipments</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card in-transit">
+                    <div class="stat-info">
+                        <h3>189</h3>
+                        <p>In Transit</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-truck-moving"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card delivered">
+                    <div class="stat-info">
+                        <h3>2,587</h3>
+                        <p>Delivered Today</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card failed">
+                    <div class="stat-info">
+                        <h3>24</h3>
+                        <p>Failed Deliveries</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Shipment Analytics</h3>
+                        <div class="chart-actions">
+                            <button class="chart-btn active" id="chartWeek">Week</button>
+                            <button class="chart-btn" id="chartMonth">Month</button>
+                            <button class="chart-btn" id="chartYear">Year</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="shipmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Delivery Status</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="deliveryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="recent-orders">
+                <div class="section-header">
+                    <h3>Recent Shipments</h3>
+                    <button class="view-all-btn">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Tracking ID</th>
+                                <th>Recipient</th>
+                                <th>Destination</th>
+                                <th>Status</th>
+                                <th>Est. Delivery</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#QE-7842</td>
+                                <td>Michael Johnson</td>
+                                <td>New York, NY</td>
+                                <td><span class="status-badge status-in-transit">In Transit</span></td>
+                                <td>Today, 4:30 PM</td>
+                                <td>
+                                    <button class="action-btn" title="Track">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </button>
+                                    <button class="action-btn" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#QE-7841</td>
+                                <td>Sarah Williams</td>
+                                <td>Chicago, IL</td>
+                                <td><span class="status-badge status-delivered">Delivered</span></td>
+                                <td>Today, 2:15 PM</td>
+                                <td>
+                                    <button class="action-btn" title="Track">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </button>
+                                    <button class="action-btn" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#QE-7840</td>
+                                <td>Robert Davis</td>
+                                <td>Los Angeles, CA</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>Tomorrow, 10:00 AM</td>
+                                <td>
+                                    <button class="action-btn" title="Track">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </button>
+                                    <button class="action-btn" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#QE-7839</td>
+                                <td>Jennifer Miller</td>
+                                <td>Houston, TX</td>
+                                <td><span class="status-badge status-in-transit">In Transit</span></td>
+                                <td>Today, 6:45 PM</td>
+                                <td>
+                                    <button class="action-btn" title="Track">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </button>
+                                    <button class="action-btn" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#QE-7838</td>
+                                <td>Thomas Wilson</td>
+                                <td>Miami, FL</td>
+                                <td><span class="status-badge status-failed">Failed</span></td>
+                                <td>Today, 11:30 AM</td>
+                                <td>
+                                    <button class="action-btn" title="Track">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </button>
+                                    <button class="action-btn" title="Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Top Drivers -->
+            <div class="recent-orders">
+                <div class="section-header">
+                    <h3>Top Drivers</h3>
+                    <button class="view-all-btn">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="drivers-grid">
+                    <div class="driver-card">
+                        <div class="driver-header">
+                            <div class="driver-avatar">MJ</div>
+                            <div class="driver-info">
+                                <h5>Michael Jordan</h5>
+                                <p>Route: Downtown</p>
+                            </div>
+                        </div>
+
+                        <div class="driver-stats">
+                            <div class="driver-stat">
+                                <h4>142</h4>
+                                <p>Today</p>
+                            </div>
+                            <div class="driver-stat">
+                                <h4>98%</h4>
+                                <p>Success Rate</p>
+                            </div>
+                            <div class="driver-stat">
+                                <h4>4.9</h4>
+                                <p>Rating</p>
+                            </div>
+                        </div>
+
+                        <div class="driver-progress">
+                            <div class="progress-label">
+                                <span>Route Completion</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <div class="driver-actions">
+                            <button class="driver-btn">
+                                <i class="fas fa-phone-alt"></i> Call
+                            </button>
+                            <button class="driver-btn">
+                                <i class="fas fa-map-marker-alt"></i> Track
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="driver-card">
+                        <div class="driver-header">
+                            <div class="driver-avatar">LS</div>
+                            <div class="driver-info">
+                                <h5>Lisa Smith</h5>
+                                <p>Route: Northside</p>
+                            </div>
+                        </div>
+
+                        <div class="driver-stats">
+                            <div class="driver-stat">
+                                <h4>128</h4>
+                                <p>Today</p>
+                            </div>
+                            <div class="driver-stat">
+                                <h4>96%</h4>
+                                <p>Success Rate</p>
+                            </div>
+                            <div class="driver-stat">
+                                <h4>4.8</h4>
+                                <p>Rating</p>
+                            </div>
+                        </div>
+
+                        <div class="driver-progress">
+                            <div class="progress-label">
+                                <span>Route Completion</span>
+                                <span>72%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 72%"></div>
+                            </div>
+                        </div>
+
+                        <div class="driver-actions">
+                            <button class="driver-btn">
+                                <i class="fas fa-phone-alt"></i> Call
+                            </button>
+                            <button class="driver-btn">
+                                <i class="fas fa-map-marker-alt"></i> Track
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="driver-card">
+                        <div class="driver-header">
+                            <div class="driver-avatar">DW</div>
+                            <div class="driver-info">
+                                <h5>David Wilson</h5>
+                                <p>Route: West District</p>
+                            </div>
+                        </div>
+
+                        <div class="driver-stats">
+                            <div class="driver-stat">
+                                <h4>118</h4>
+                                <p>Today</p>
+                            </div>
+                            <div class="driver-stat">
+                                <h4>94%</h4>
+                                <p>Success Rate</p>
+                            </div>
+                            <div class="driver-stat">
+                                <h4>4.7</h4>
+                                <p>Rating</p>
+                            </div>
+                        </div>
+
+                        <div class="driver-progress">
+                            <div class="progress-label">
+                                <span>Route Completion</span>
+                                <span>65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+
+                        <div class="driver-actions">
+                            <button class="driver-btn">
+                                <i class="fas fa-phone-alt"></i> Call
+                            </button>
+                            <button class="driver-btn">
+                                <i class="fas fa-map-marker-alt"></i> Track
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Dashboard functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mainContent = document.getElementById('mainContent');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+
+            sidebarToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+
+                // Change icon based on state
+                if (sidebar.classList.contains('collapsed')) {
+                    this.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                }
+            });
+
+            // Mobile menu toggle
+            mobileMenuToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('show');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function (event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMobileToggle = mobileMenuToggle.contains(event.target);
+
+                if (!isClickInsideSidebar && !isClickOnMobileToggle && window.innerWidth < 992) {
+                    sidebar.classList.remove('show');
+                }
+            });
+
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', function () {
+                if (confirm('Are you sure you want to logout?')) {
+                    // Redirect to login page
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // Chart buttons
+            const chartWeek = document.getElementById('chartWeek');
+            const chartMonth = document.getElementById('chartMonth');
+            const chartYear = document.getElementById('chartYear');
+
+            chartWeek.addEventListener('click', function () {
+                chartWeek.classList.add('active');
+                chartMonth.classList.remove('active');
+                chartYear.classList.remove('active');
+                updateChartData('week');
+            });
+
+            chartMonth.addEventListener('click', function () {
+                chartWeek.classList.remove('active');
+                chartMonth.classList.add('active');
+                chartYear.classList.remove('active');
+                updateChartData('month');
+            });
+
+            chartYear.addEventListener('click', function () {
+                chartWeek.classList.remove('active');
+                chartMonth.classList.remove('active');
+                chartYear.classList.add('active');
+                updateChartData('year');
+            });
+
+            // Initialize Charts
+            const shipmentChartCtx = document.getElementById('shipmentChart').getContext('2d');
+            const deliveryChartCtx = document.getElementById('deliveryChart').getContext('2d');
+
+            let shipmentChart, deliveryChart;
+
+            // Create shipment chart
+            function createShipmentChart(data) {
+                if (shipmentChart) shipmentChart.destroy();
+
+                shipmentChart = new Chart(shipmentChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: 'Shipments',
+                                data: data.shipments,
+                                borderColor: '#6366f1',
+                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Deliveries',
+                                data: data.deliveries,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    stepSize: 50
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Create delivery chart (doughnut)
+            function createDeliveryChart() {
+                deliveryChart = new Chart(deliveryChartCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Delivered', 'In Transit', 'Pending', 'Failed'],
+                        datasets: [{
+                            data: [65, 20, 10, 5],
+                            backgroundColor: [
+                                '#10b981',
+                                '#6366f1',
+                                '#f59e0b',
+                                '#ef4444'
+                            ],
+                            borderWidth: 0,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '75%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Chart data for different time periods
+            function updateChartData(period) {
+                let labels, shipments, deliveries;
+
+                if (period === 'week') {
+                    labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    shipments = [320, 340, 365, 380, 410, 390, 420];
+                    deliveries = [280, 300, 320, 340, 380, 350, 400];
+                } else if (period === 'month') {
+                    labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+                    shipments = [1200, 1350, 1420, 1580];
+                    deliveries = [1050, 1200, 1300, 1450];
+                } else {
+                    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    shipments = [3800, 4200, 4500, 4800, 5100, 5300, 5500, 5800, 6000, 6300, 6500, 6800];
+                    deliveries = [3500, 3900, 4200, 4500, 4800, 5000, 5200, 5500, 5700, 6000, 6200, 6500];
+                }
+
+                createShipmentChart({ labels, shipments, deliveries });
+            }
+
+            // Initialize charts
+            updateChartData('week');
+            createDeliveryChart();
+
+            // Action buttons for shipments
+            const actionButtons = document.querySelectorAll('.action-btn');
+            actionButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const action = this.querySelector('i').className.includes('map-marker-alt') ? 'track' : 'view';
+                    const row = this.closest('tr');
+                    const trackingId = row.cells[0].textContent;
+
+                    if (action === 'track') {
+                        showNotification(`Tracking package ${trackingId}`, 'success');
+                    } else {
+                        showNotification(`Viewing details for ${trackingId}`, 'info');
+                    }
+                });
+            });
+
+            // Driver action buttons
+            const driverButtons = document.querySelectorAll('.driver-btn');
+            driverButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const action = this.textContent.trim().toLowerCase();
+                    const card = this.closest('.driver-card');
+                    const driverName = card.querySelector('.driver-info h5').textContent;
+
+                    if (action.includes('call')) {
+                        showNotification(`Calling ${driverName}`, 'info');
+                    } else {
+                        showNotification(`Tracking ${driverName}'s route`, 'success');
+                    }
+                });
+            });
+
+            // Notification button
+            const notificationBtn = document.querySelector('.notification-btn');
+            notificationBtn.addEventListener('click', function () {
+                showNotification('Showing notifications', 'info');
+                // In a real app, you'd show a dropdown with notifications
+            });
+
+            // Search box
+            const searchInput = document.querySelector('.search-box input');
+            searchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    showNotification(`Searching for: ${this.value}`, 'info');
+                    this.blur();
+                }
+            });
+
+            // View all buttons
+            const viewAllButtons = document.querySelectorAll('.view-all-btn');
+            viewAllButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const section = this.closest('.recent-orders').querySelector('h3').textContent;
+                    showNotification(`Viewing all ${section}`, 'info');
+                });
+            });
+
+            // Animated gradient for stats cards on hover
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-5px)';
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Notification function
+            function showNotification(message, type = 'info') {
+                // Remove existing notification
+                const existingNotification = document.querySelector('.custom-notification');
+                if (existingNotification) existingNotification.remove();
+
+                // Create notification
+                const notification = document.createElement('div');
+                notification.className = `custom-notification`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    background: ${type === 'error' ? '#fee' : (type === 'success' ? '#d1fae5' : '#e0f2fe')};
+                    border: 1px solid ${type === 'error' ? '#fca5a5' : (type === 'success' ? '#a7f3d0' : '#bae6fd')};
+                    border-radius: 12px;
+                    padding: 1rem 1.5rem;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    color: ${type === 'error' ? '#dc2626' : (type === 'success' ? '#065f46' : '#075985')};
+                `;
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : (type === 'success' ? 'check-circle' : 'info-circle')} me-3 fs-4"></i>
+                        <div>${message}</div>
+                    </div>
+                `;
+
+                document.body.appendChild(notification);
+
+                // Auto remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.style.animation = 'slideOut 0.3s ease';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 3000);
+            }
+
+            // Add notification animations
+            const notificationStyle = document.createElement('style');
+            notificationStyle.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(notificationStyle);
+
+            // Page entrance animation
+            const contentWrapper = document.querySelector('.content-wrapper');
+            contentWrapper.style.opacity = '0';
+            contentWrapper.style.transform = 'translateY(20px)';
+            contentWrapper.style.transition = 'all 0.6s ease';
+
+            setTimeout(() => {
+                contentWrapper.style.opacity = '1';
+                contentWrapper.style.transform = 'translateY(0)';
+            }, 300);
+        });
+    </script>
+</body>
+
+</html>
